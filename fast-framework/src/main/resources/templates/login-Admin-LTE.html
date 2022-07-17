@@ -1,0 +1,277 @@
+<!--
+* Copyright (c) 2020-Now http://www.j2eefast.com All rights reserved.
+* No deletion without permission
+* @author ZhouZhou
+* @version 2021-07-24
+-->
+<#include "/common/defaultEngine.html">
+<@pageTheme mark=true>
+<@header title="登 录" isPAS=false>
+<#-- Bootstrap 3.3.7 -->
+<link rel="stylesheet" href="${ctxStatic}/static/css/bootstrap.min.css">
+<#-- Font Awesome -->
+<link rel="stylesheet" href="${ctxStatic}/static/css/font-awesome.min.css">
+<#--animate 样式-->
+<link rel="stylesheet" href="${ctxStatic}/static/css/animate.min.css"/>
+<#-- iCheck -->
+<link rel="stylesheet" href="${ctxStatic}/static/css/iCheck/all.css?V=${config.getDvVersion()}">
+<#-- jQuery toast 提示框  -->
+<link rel="stylesheet" href="${ctxStatic}/static/css/jquery.toast.css">
+<#if tenantModel>
+<link rel="stylesheet" href="${ctxStatic}/static/plugins/select2/select2.min.css"/>
+<link rel="stylesheet" href="${ctxStatic}/static/plugins/select2/select2-bootstrap.css"/>
+</#if>
+<link rel="stylesheet" href="${ctxStatic}/static/css/let-login.css?V=${config.getDvVersion()}">
+<#if verification || isValidationCode>
+<link rel="stylesheet" href="${ctxStatic}/static/plugins/captcha/css/verify.css">
+</#if>
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+<#-- Vue单页面刷新闪烁标签{{}}问题解决-->
+<style>[v-cloak]{display:none !important;}
+     <#--.login-page {-->
+     <#--    background-image: url(${ctxStatic}/static/img/login/bg.png);-->
+     <#--    background-repeat: no-repeat;-->
+     <#--    background-size:100% 100%;-->
+     <#--}-->
+    <#-- .animated {-->
+    <#--   -webkit-animation-duration: 2.6s;-->
+    <#--   animation-duration: 2.6s;-->
+    <#--   -webkit-animation-fill-mode: both;-->
+    <#--   animation-fill-mode: both;-->
+    <#--}-->
+    <#--.login-logo a, .register-logo a {-->
+    <#--     color: #fff;-->
+    <#--     font-weight: 400;-->
+    <#-- }-->
+    <#-- .footer-item, .footer-item a{-->
+    <#--     color: #fff !important;-->
+    <#-- }-->
+    <#-- .footer-item a:hover{-->
+    <#--     color:#fff;-->
+    <#-- }-->
+</style>
+<script>
+    var PHONETIP = "${i18n("手机号码不合法，请重新输入")}";
+    var USERNAMEERR = "${i18n("账号或者密码输入有误")}";
+    var TENANTMODEL = ${tenantModel?string}; 
+    var VERIFICATION = ${verification?string};
+    var VALIDELOGIN = ${valideLogin?string};
+    var ISVALIDATIONCODE = ${isValidationCode?string}; 
+    var TENANTLABEL = "${i18n("请 选 择 租 户")}";
+    var MOBILE_TOGGLE = "${i18n("短信验证登录")}";
+    var USERNAME_TOGGLE = "${i18n("账号密码登录")}";
+    var RM_AUTH_CODE = "${i18n("重发验证码")}";
+    var MM_AUTH_CODE = "${i18n("秒后可重发")}";
+    var WAITING = "${i18n("数据正在认证,请稍后...")}";
+    var SENDOW = "${i18n("已发送,请尽快填写")}";
+    var PW_ERROR = "${i18n("账号或者密码输入有误")}";
+    var WARNING = "${i18n("警告")}";
+    var INCORRECT_VERIFICATION_CODE = "${i18n("验证码有误")}";
+</script>
+</@header>
+<body class="hold-transition login-page">
+<#include "/common/notice.html">
+<#include "/common/upgrade.html"><!-- 如果客户浏览器版本过低，则显示浏览器升级提示-->
+<div id="canvas" style="position: absolute; z-index: -100; top: 0px;width: 100%; height: 98%">
+</div>
+<#if verification || isValidationCode>
+<div id="verfyImg"></div>
+</#if>
+<div class="login-box animated fadeInLeft" id="__app" v-cloak>
+  <div class="login-logo">
+    <a href="#">${config.getTitle()}</a>
+<#--<small>V${config.getVersion()}</small>-->
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+      <nav class="login-tabs">
+          <span class="tab-bg">v${config.getVersion()}</span>
+      </nav>
+      <p class="login-box-msg">${i18n("欢迎登录")}</p>
+      <form action="#" method="post">
+      <#if tenantModel>
+      <div class="login-title">
+          <div class="form-tenant">
+              <div class="login-select">
+                  <@f.select name="tenantId" blankValue="" blankLabel="" status=false items=loginTenantList itemLabel="tenantName" itemValue="tenantId"/>
+              </div>
+          </div>
+      </div>
+      </#if>
+      <div v-if="!phoneValid" class="form-group has-feedback">
+        <input type="text" class="form-control" id="username" v-model="username" placeholder="${i18n("账号/邮箱/手机号码")}">
+        <span class="fa icon-user form-control-feedback "></span>
+      </div>
+      <div  v-if="!phoneValid" class="form-group has-feedback">
+        <input type="password" id="password"  autocomplete="off" class="form-control"  v-model="password" placeholder="${i18n("密码")}">
+        <span  class="fa icon-lock form-control-feedback" title="${i18n("登录密码,鼠标按下显示密码")}"
+              onmousedown="$('#password').attr('type','text')"
+              onmouseup="$('#password').attr('type','password')"
+              onmouseenter="$(this).removeClass('icon-lock').addClass('icon-eye')"
+              onmouseout="$(this).removeClass('icon-eye').addClass('icon-lock')">
+        </span>
+      </div>
+      <div v-if="phoneValid" class="form-group has-feedback">
+          <input type="text"  class="form-control" v-model="phoneNo" placeholder="${i18n("手机号码")}">
+          <span class="fa icon-screen-smartphone form-control-feedback"></span>
+      </div>
+      <div v-if="phoneValid" class="form-group has-feedback">
+          <div class="input-group">
+              <input type="text" id="loginValidCode" v-model="loginValidCode" :disabled="sendValid" class="form-control" placeholder="${i18n("手机验证码")}">
+              <span class="input-group-btn">
+                <input type="button" id="butValieCode" value="${i18n("获取手机验证码")}" title="${i18n("获取手机验证码")}" class="btn btn-flat" @click="getValidCode" >
+              </span>
+          </div>
+      </div>
+      <div  v-if="loadcode" class="form-group has-feedback">
+        <input type="text" class="form-control"  v-model="captcha" copyright="J2eeFAST" placeholder="${i18n("验证码")}">
+        <span class="fa icon-info form-control-feedback"></span>
+      </div>
+      <div v-if="loadcode"  class="form-group has-feedback">
+        <img alt="${i18n("如果看不清楚，请单击图片刷新!")}" class="img-rounded" :src="src" @click="refreshCode">
+        &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" @click="refreshCode">${i18n("点击刷新")}</a>
+      </div>
+      <div class="form-group row">
+        <div class="col-xs-6">
+            <div class="checkbox icheck">
+                <label title="${i18n("公共场所慎用,下次登录免输账号")}" data-toggle="tooltip" data-placement="bottom">
+                    <input type="checkbox" name="rememberUserCode" data-style="minimal-blue" />${i18n("记住账号")}
+                </label>
+            </div>
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-6">
+            <#if rememberMe>
+            <div class="checkbox icheck">
+                <label title="${i18n("公共场所慎用,下次登录免输账号、密码")}" data-toggle="tooltip" data-placement="bottom">
+                    <input type="checkbox" name="rememberme" v-model="rememberme" data-style="minimal-blue"> ${i18n("自动登录")}
+                </label>
+            </div>
+            </#if>
+        </div>
+        <!-- /.col -->
+      </div>
+      </form>
+      <div class="form-group  row">
+          <div class="col-xs-12">
+              <button type="button" class="btn btn-primary btn-block btn-flat" @click="login" data-loading="正在验证登录，请稍后...">${i18n("登 录")}</button>
+          </div>
+      </div>
+      <div class="row">
+          <div class="col-xs-6">
+          	<#if valideLogin>
+              <a @click="_phoneValid">{{login_toggle}}</a>
+            </#if>  
+          </div>
+		  <div class="col-xs-6">
+                <#if msgEnabled>
+                <div class="dropdown pull-right">
+                    <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                        <i class="fa fa-language"></i>&nbsp;${dict.getLabel("sys_lang_type","${config.getSysLang()}")}
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li class="mt5"></li>
+                        <#list dict.getType('sys_lang_type')>
+                            <#items as d>
+                                <#if d.status =='0' >
+                                    <li><a @click="__clearLang" href="${ctxStatic+login}?_lang=${d.dictValue}">${d.dictLabel}</a></li>
+                                </#if>
+                            </#items>
+                        </#list>
+                        <li class="mt5"></li>
+                    </ul>
+                </div>
+                </#if>
+          </div>
+       </div>
+      <div class="social-auth-links text-center">
+          <#if config.getKey("SYS_IS_OAUTH") == "0">
+          <div class="oauth-title">
+              <span class="text-muted"> ${i18n("其他方式登录")} </span>
+          </div>
+          <div class="oauth-list">
+              <div class="item" title="${i18n("使用 Gitee 账号授权登录")}" data-toggle="tooltip" data-placement="top">
+                  <a :href="'${ctxStatic}/auth/gitee?tenantId='+tenantId + '&rememberMe='+rememberme">
+                      <img src="${ctxStatic}/static/img/login/gitee.svg"/>
+                  </a>
+              </div>
+              <div class="item" title="${i18n("使用 GitHub 账号授权登录")}" data-toggle="tooltip" data-placement="top">
+                  <a :href="'${ctxStatic}/auth/github?tenantId='+tenantId + '&rememberMe='+rememberme">
+                      <img src="${ctxStatic}/static/img/login/github.svg"/>
+                  </a>
+              </div>
+              <div class="item" title="${i18n("使用 OsChina 账号授权登录")}" data-toggle="tooltip" data-placement="top">
+                  <a :href="'${ctxStatic}/auth/oschina?tenantId='+tenantId + '&rememberMe='+rememberme">
+                      <img src="${ctxStatic}/static/img/login/oschina.svg"/>
+                  </a>
+              </div>
+              <div class="item" title="${i18n("功能开发中...")}" data-toggle="tooltip" data-placement="top">
+                  <a href="#">
+                      <img src="${ctxStatic}/static/img/login/qq-no.svg"/>
+                  </a>
+              </div>
+          </div>
+          </#if>
+          <#include "/common/index/compatibility.html"/>
+      </div>
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- /.login-box -->
+<div class="help-block text-center">
+<#-- Enter your password to retrieve your session -->
+</div>
+<div class="login__footer __copyright animated fadeInLeft">
+    <span class="footer-item">
+      Copyright &copy; 2018-${config.getCopyrightYear()} ${config.getCompany()}
+    </span>
+    <span class="footer-item">
+        <a href="https://www.yuque.com/u1174484/j2eefast/tv3kee" target="_blank">${i18n("帮助文档")}</a>
+    </span>
+    <#list dict.getType('sys_login_view')>
+        <#items as d>
+            <#if d.status =='0' >
+                <span class="footer-item">
+                    <a href="${ctxStatic + login}?view=${d.dictValue}">${d.dictLabel}</a>
+                </span>
+            </#if>
+        </#items>
+    </#list>
+</div>
+<div class="login__footer animated fadeInLeft" >
+        <span class="footer-item">
+            <a href="http://www.beian.miit.gov.cn/" class="text-black" target="_blank">${config.getIPC()}</a>
+        </span>
+</div>
+<#-- Bootstrap 3.3.7 -->
+<script src="${ctxStatic}/static/libs/bootstrap.min.js"></script>
+<#if tenantModel>
+<script src="${ctxStatic}/static/plugins/select2/select2.min.js"></script>
+</#if>
+<script src="${ctxStatic}/static/libs/crypto-SM.min.js?V=${config.getDvVersion()}"></script>
+<#--<script src="${ctxStatic}/static/plugins/sm/crypto/crypto-SM.js?V=${config.getDvVersion()}"></script>-->
+<#-- iCheck -->
+<script src="${ctxStatic}/static/libs/icheck.min.js"></script>
+<#-- 全局遮罩-->
+<script src="${ctxStatic}/static/plugins/blockUI/jquery.blockUI.js?V=${config.getDvVersion()}"></script>
+<#--<script src="${ctxStatic}/static/plugins/blockUI/jquery.blockUI.js?V=${config.getDvVersion()}"></script>-->
+<#-- jQuery toast 提示框  -->
+<script src="${ctxStatic}/static/libs/jquery.toast.js"></script>
+<script src="${ctxStatic}/static/libs/vue.min.js"></script>
+<#-- 粒子射线背景-->
+<script src="${ctxStatic}/static/libs/jquery.particleground.min.js"></script>
+<#if verification || isValidationCode>
+<script src="${ctxStatic}/static/plugins/captcha/crypto-js.js"></script>
+<script src="${ctxStatic}/static/plugins/captcha/ase.min.js"></script>
+<script src="${ctxStatic}/static/plugins/captcha/verify.js"></script>
+</#if>
+<script src="${ctxStatic}/static/libs/let-login.js?V=${config.getDvVersion()}"></script>
+</body>
+</html>
+</@pageTheme>

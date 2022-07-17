@@ -1,0 +1,119 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="定时任务日志列表" libs=["table"]/>
+<div class="container-div">
+	<div class="row">
+	<div class="col-sm-12 search-collapse">
+	<@f.form id="jobLog-form">
+		<div class="select-list">
+			<ul>
+				<li>
+					${i18n("任务名称")}：<input type="text" class="form-control" name="jobName"/>
+				</li>
+				<li>
+					${i18n("任务分组")}：
+					<@f.select name="jobGroup" blankValue="" blankLabel="所有" dictType="sys_job_group" />
+				</li>
+				<li>
+					${i18n("任务状态")}：
+					<@f.select name="status" blankValue="" blankLabel="所有" dictType="sys_common_status" />
+				</li>
+				<li class="select-time">
+					<label>${i18n("执行时间")}： </label>
+					<@f.input id="startTime" name="beginTime" placeholder="开始时间"/>
+					<span>-</span>
+					<@f.input id="endTime" name="endTime" placeholder="结束时间"/>
+				</li>
+				<li>
+					<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;${i18n("搜索")}</a>
+					<a class="btn btn-warning btn-rounded btn-sm" onclick="opt.form.reset()"><i class="fa fa-refresh"></i>&nbsp;${i18n("重置")}</a>
+				</li>
+			</ul>
+		</div>
+	</@f.form>
+	</div>
+	<@table id="bootstrap-table">
+		<@shiro.hasPermission name="sys:joblog:del">
+			<a class="btn btn-danger multiple disabled" onclick="opt.operate.delAll()">
+				<i class="fa fa-remove"></i> ${i18n("删除")}
+			</a>
+		</@shiro.hasPermission>
+		<@shiro.hasPermission name="sys:joblog:clean">
+				<a class="btn btn-danger" onclick="opt.operate.clean()">
+					<i class="fa fa-trash"></i> ${i18n("清空")}
+				</a>
+		</@shiro.hasPermission>
+	</@table>
+	</div>
+</div>
+<@footer>
+	<script>
+		var statusDatas = ${dict.getDictListJson('sys_common_status')};
+		var groupDatas = ${dict.getDictListJson('sys_job_group')};
+		var prefix = baseURL + "sys/jobLog";
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        cleanUrl: prefix + "/clean",
+		        delUrl: prefix + "/del",
+		        sortName: "createTime",
+		        sortOrder: "desc",
+		        modalName: "${i18n("调度日志")}",
+		        columns: [
+		        {
+		            checkbox: true
+		        },
+		        {
+                    title: $.i18n.text("序号"), width: 5, align: "center", formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+		        {
+		            field: 'jobId',
+		            title: '${i18n("任务编号")}'
+		        },
+		        {
+		            field: 'jobName',
+		            title: '${i18n("任务名称")}'
+		        },
+		        {
+		            field: 'jobGroup',
+		            title: '${i18n("任务分组")}',
+		            formatter: function(value, row, index) {
+		            	return opt.common.selectDictLabel(groupDatas, value);
+		            }
+		        },
+				{
+					field: 'invokeTarget',
+					title: '${i18n("调用目标字符串")}',
+					formatter: function(value, row, index) {
+						return opt.common.tooltip(value);
+					}
+				},
+		        {
+		            field: 'times',
+		            title: '${i18n("耗时")}',
+					formatter: function(value, row, index) {
+						return value + "(${i18n("毫秒")})";
+					}
+		        },
+		        {
+		            field: 'status',
+		            title: $.i18n.text("状态"),
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	return opt.common.selectDictLabel(statusDatas, value);
+		            }
+		        },
+		        {
+		            field: 'createTime',
+		            title: '${i18n("执行时间")}',
+		            sortable: true
+		        }]
+		    };
+		    $.table.init(options);
+		});
+	</script>
+</@footer>
+</@pageTheme>

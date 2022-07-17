@@ -1,0 +1,198 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="角色管理" bodyClass="white-bg" libs=["zTree"]/>
+<div class="wrapper wrapper-content ibox-content">
+<@f.form id="form-role-addt" class="form-horizontal">
+	<div class="form-group">
+		<label class="col-sm-3 control-label ">${i18n("角色名称")}：</label>
+		<div class="col-sm-8">
+			<@f.input name="roleName" required=true/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("权限字符")}：</label>
+		<div class="col-sm-8">
+			<@f.input name="roleKey" required=true/>
+			<span class="help-block m-b-none"><i class="fa fa-info-circle" style="color: red"></i>
+				<#--   ${i18n("前端页面使用定义的权限字符，如：{0}{1}{2}" args=['${','permission.isRole("ADMIN")','}'] /> -->
+				${i18n("前端页面使用定义的权限字符，如：{0}{1}{2}",['${','permission.isRole("ADMIN")','}'])}
+			</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("管理模块")}：</label>
+		<div class="col-sm-8">
+			<@f.checkbox name="moduleCodes" items=modules itemLabel="moduleName" itemValue="moduleCode" required=true/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("显示排序")}：</label>
+		<div class="col-sm-8">
+			<@f.input name="roleSort" required=true/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("状态")}：</label>
+		<div class="col-sm-8">
+			<@f.switch name="status" value="0"/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("备注")}：</label>
+		<div class="col-sm-8">
+			<@f.textarea name="remark"/>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label">${i18n("菜单权限")}: </label>
+		<div  class="col-sm-8">
+			<div class="box box-solid" style="background:#FAFAFA;border-top: 1px solid rgb(210, 214, 222);">
+				<div class="box-header">
+					<div class="box-title">
+						<label class="check-box">
+							<input type="checkbox" id="checkall"/> ${i18n("全部勾选")}
+						</label>
+					</div>
+					<div class="box-tools pull-right" style="top:8px;">
+						<a class="btn btn-box-tool" id="expand"
+						   value="dataScopeTree" >${i18n("展开")}</a>/
+						<a class="btn btn-box-tool" id="collapse" value="dataScopeTree" >${i18n("折叠")}</a>
+					</div>
+				</div>
+				<div class="box-body">
+					<div id="menuTrees" class="ztree">
+				</div>
+			</div>
+		</div>
+	</div>
+</@f.form>
+</div>
+<@footer>
+<script>
+	    $(function() {
+			var url = baseURL + "sys/menu/roleModuleMenuTreeData";
+			var options = {
+				id: "menuTrees",
+		        url: url,
+		        check: { enable: true },
+		        expandLevel: 0
+		    };
+			$.tree.init(options);
+
+			$('input[name="moduleCodes"]').each(function () {
+				$(this).on('ifChanged', function(event){
+					var txt = opt.common.getCheckboxValue("moduleCodes");
+					if(opt.common.isEmpty(txt)){
+						$("#menuTrees").hide();
+					}else{
+						$("#menuTrees").show();
+					}
+
+					var url = baseURL + "sys/menu/roleModuleMenuTreeData?moduleCodes="+txt;
+					var options = {
+						id: "menuTrees",
+						url: url,
+						check: { enable: true },
+						expandLevel: 0
+					};
+					$.tree.init(options);
+
+				});
+			})
+		});
+
+		$('#checkall').on('ifChecked ifUnchecked', function(){
+			if(this.checked){
+				$.tree.checkAllNodes(true);
+			}else{
+				$.tree.checkAllNodes(false);
+			}
+		})
+		/* 树展开事件 */
+		$('#expand').click(function() {
+			$.tree.expand();
+		});
+
+		/* 树折叠事件 */
+		$('#collapse').click(function() {
+			$.tree.collapse();
+		});
+		
+		$("#form-role-add").validate({
+			rules:{
+				onkeyup: false,
+				roleName:{
+					remote: {
+		                url: baseURL + "sys/role/checkRoleNameUnique",
+		                type: "POST",
+		                dataType: "html",
+		                data: {
+		                	"roleName" : function() {
+		                		return opt.common.trim($("#roleName").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return opt.validate.unique(data);
+		                }
+		            }
+				},
+				roleKey:{
+					remote: {
+		                url: baseURL + "sys/role/checkRoleKeyUnique",
+		                type: "POST",
+		                dataType: "html",
+		                data: {
+		                	"roleKey" : function() {
+		                        return opt.common.trim($("#roleKey").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return opt.validate.unique(data);
+		                }
+		            }
+				},
+				roleSort:{
+					digits:true
+				},
+			},
+			messages: {
+		        "roleName": {
+		            remote: "${i18n("已经存在")}"
+		        },
+		        "roleKey": {
+		            remote: "${i18n("已经存在")}"
+		        }
+		    },
+		    focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if (opt.validate.form()) {
+	        	add();
+	        }
+	    }
+
+		/**
+		 * 不用from 表单提交案例
+		 */
+		function add() {
+			var roleName = $("input[name='roleName']").val();
+			var roleKey = $("input[name='roleKey']").val();
+			var roleSort = $("input[name='roleSort']").val();
+			var status = $("input[id='status']").val();
+			var remark = $("input[name='remark']").val();
+			var menuIds = $.tree.getCheckedNodes();
+			var moduleCodes = opt.common.getCheckboxValue("moduleCodes");
+			var data = [];
+			data.push({"name": "roleName", "value": roleName});
+			data.push({"name": "roleKey", "value": roleKey});
+			data.push({"name": "roleSort", "value": roleSort});
+			data.push({"name": "moduleCodes", "value": moduleCodes});
+			data.push({"name": "status", "value": status});
+			data.push({"name": "remark", "value": remark});
+			data.push({"name": "menuIds", "value": menuIds});
+			opt.operate.save(baseURL + "sys/role/add",data);
+		}
+	</script>
+</@footer>
+</@pageTheme>

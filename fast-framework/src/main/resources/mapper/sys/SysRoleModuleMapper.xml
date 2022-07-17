@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysRoleModuleMapper">
+
+	<select id="findRoleModuleList"  parameterType="Long"  resultType="String">
+		SELECT module_code FROM sys_role_module WHERE role_id = #{roleId}
+	</select>
+
+</mapper>

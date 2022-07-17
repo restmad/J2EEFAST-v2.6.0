@@ -1,0 +1,48 @@
+/*
+ * All content copyright http://www.j2eefast.com, unless
+ * otherwise indicated. All rights reserved.
+ * No deletion without permission
+ */
+package com.j2eefast.framework.sys.factory;
+
+import cn.hutool.core.util.IdUtil;
+import com.j2eefast.common.core.base.entity.LoginUserEntity;
+import com.j2eefast.framework.sys.constant.factory.ConstantFactory;
+import com.j2eefast.framework.sys.entity.SysUserEntity;
+
+/**
+ * <p>用户创建工厂</p>
+ *
+ * @author: zhouzhou
+ * @date: 2019-04-07 10:00
+ * @web: http://www.j2eefast.com
+ * @version: 1.0.1
+ */
+public class UserFactory {
+
+	/**
+	 * 通过用户表的信息创建一个登录用户
+	 */
+	public static LoginUserEntity createLoginUser(SysUserEntity user) {
+		LoginUserEntity loginUser = new LoginUserEntity();
+
+		if (user == null) {
+			return loginUser;
+		}
+		loginUser.setId(user.getId());
+		loginUser.setUsername(user.getUsername());
+		loginUser.setDeptId(user.getDeptId());
+		loginUser.setCompId(user.getCompId());
+		loginUser.setName(user.getName());
+		loginUser.setPwdUpdateDate(user.getPwdUpdateDate());
+		loginUser.setMobile(user.getMobile());
+		loginUser.setEmail(user.getEmail());
+		loginUser.setPwdSecurityLevel(user.getPwdSecurityLevel());
+		loginUser.setAvatar(user.getAvatar());
+		loginUser.setTenantId(user.getTenantId());
+		loginUser.setTenanName(user.getTenantName());
+//		loginUser.setCompName(user.getCompName());
+		loginUser.setCsrfToken(IdUtil.fastSimpleUUID());
+		return loginUser;
+	}
+}

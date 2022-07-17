@@ -1,0 +1,35 @@
+<div id="leftMenu" class="tab-content">
+ <#if menuList?? && (menuList?size > 0) >
+    <#list menuList?keys as key>
+    <ul class="tab-pane sidebar-menu" data-widget="tree" id="leftMenu-${key}">
+        <li class="header"></li>
+        <#if menuList[key]?? && (menuList[key]?size > 0) >
+            <#list menuList[key] as menu>
+                <#if menu.type == 0>
+            <li class="treeview">
+                    <a href="javascript:;" title="${i18n("${menu.name}")}">
+                    <#if menu.icon??><i class="${menu.icon}"></i></#if>
+                     <span>${i18n("${menu.name}")}</span>
+                     <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                     </a>
+                    <ul class="treeview-menu">
+                        <#if menu.children?? && (menu.children?size>0)>
+                            <@showMenu menu.children, key />
+                        </#if>
+                    </ul>
+                </#if>
+                <#if menu.type == 1>
+             <li class="tree-link">
+                    <a href="javascript:;" data-url="${menu.url}" data-module="<#if menu.name == "首页">_main<#else>${key}</#if>" data-target="${menu.target?default("")}" data-id="<#if menu.name == "首页">0<#else>${menu.MId}</#if>" title="${i18n("${menu.name}")}">
+                        <#if menu.icon??><i class="${menu.icon}" data-icon="${menu.icon}"></i></#if>
+                        <span>${i18n("${menu.name}")}</span>
+                        <#if menu.MNew><span class="pull-right-container"><small data-index="_new" class="label pull-right bg-red">${i18n("新")}</small></span></#if>
+                    </a>
+                </#if>
+             </li>
+             </#list>
+        </#if>
+    </ul>
+   </#list>
+</#if>
+</div>

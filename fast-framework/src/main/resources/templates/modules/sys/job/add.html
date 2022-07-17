@@ -1,0 +1,152 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="任务管理" bodyClass="white-bg" libs=["bootstrapSelect"]/>
+<div class="wrapper wrapper-content ibox-content">
+	<@f.form id="form-job-add" class="form-horizontal">
+	<h4 class="form-header h4">${i18n("基本信息")}</h4>
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("任务名称")}:</label>
+				<div class="col-sm-8">
+					<@f.input name="jobName"  placeholder="请输入任务名称" required=true/>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-6">
+			<div class="form-group">
+				<label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("任务分组")}：</label>
+				<div class="col-sm-8">
+					<@f.select name="jobGroup" dictType="sys_job_group" required=true/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+				<label class="control-label col-sm-2" title="">
+					<span style="color: red; ">*</span>${i18n("调用目标")}:</label>
+				<div class="col-sm-10">
+					<@f.input name="invokeTarget" placeholder="调用目标" required=true
+					helpTip="${i18n('SpringBean 调用示例: {0}填写 {1}',['@Component(\"jobTaskTest\")','jobTaskTest.fastParams(\"123\")'])}"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+				<label class="control-label col-sm-2" title="">
+					<span style="color: red; ">*</span>${i18n("执行失败策略")}:</label>
+				<div class="col-sm-10">
+					<label class="radio-box"> <input type="radio"  name="misfirePolicy" value="1" /> ${i18n("立即执行")} </label>
+					<label class="radio-box"> <input type="radio"  name="misfirePolicy" value="2" /> ${i18n("执行一次")} </label>
+					<label class="radio-box"> <input type="radio" checked name="misfirePolicy" value="3" /> ${i18n("放弃执行")} </label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+				<label class="control-label col-sm-2" title="">
+					<span style="color: red; ">*</span>${i18n("是否允许并发进行")}:</label>
+				<div class="col-sm-10">
+					<label class="radio-box"> <input type="radio" name="concurrent" value="0"/> ${i18n("允许")} </label>
+					<label class="radio-box"> <input type="radio" checked name="concurrent" value="1"/> ${i18n("禁止")} </label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+				<label class="control-label col-sm-2" title="">
+					<span style="color: red; ">*</span> ${i18n("Cron执行表达式")}:</label>
+				<div class="col-sm-10">
+					<input type="hidden" id="cronExpression" name="cronExpression" value="" maxlength="255" class="form-control required "/>
+					<iframe id="cronFrame" src="${ctxStatic}/sys/schedule/cron" style="width:100%;height:530px;border:0;"></iframe>
+					<script type="text/javascript">
+						$('#cronFrame').load(function(){
+							var win = $(this)[0].contentWindow;
+							win.$('#cron').val($('#cronExpression').val());
+							win.$("input[name^='v_'],#cron").change(function(){
+								$('#cronExpression').val(win.$('#cron').val());
+							});
+							win.$('#btnFan').click();
+						});
+					</script>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="form-group">
+				<label class="col-sm-4 control-label">${i18n("状态")}：</label>
+				<div class="col-sm-8">
+					<@f.radio name="status" dictType="sys_job_status"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	<h4 class="form-header h4">${i18n("其它信息")}</h4>
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="form-group">
+				<label class="col-sm-2 control-label">${i18n("备注")}：</label>
+				<div class="col-sm-10">
+					<@f.textarea  name="remark"/>
+				</div>
+			</div>
+		</div>
+	</div>
+	</@f.form>
+	<div class="hr-line-dashed"></div>
+	<div class="row" id="_addTab">
+		<div class="col-sm-offset-5 col-sm-10">
+			<button type="button" class="btn btn-sm btn-primary" onclick="opt.form.submit()"><i class="fa fa-check"></i>${i18n("保存")}</button>&nbsp;
+			<button type="button" class="btn btn-sm btn-danger" onclick="opt.modal.closeTab()"><i class="fa fa-reply-all"></i>${i18n("关闭")}</button>
+		</div>
+	</div>
+</div>
+<@footer>
+	<script type="text/javascript">
+		var prefix = baseURL + "sys/schedule";
+	
+		$("#form-job-add").validate({
+			onkeyup: false,
+			rules:{
+				cronExpression:{
+					remote: {
+	                    url: prefix + "/checkCronExpressionIsValid",
+	                    type: "post",
+	                    dataType: "html",
+	                    data: {
+	                        "cronExpression": function() {
+	                            return opt.common.trim($("#cronExpression").val());
+	                        }
+	                    },
+	                    dataFilter: function(data, type) {
+							return opt.validate.unique(data);
+	                    }
+	                }
+				},
+			},
+			messages: {
+	            "cronExpression": {
+	                remote: "${i18n("表达式不正确")}"
+	            }
+	        },
+	        focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if (opt.validate.form()) {
+	        	opt.operate.saveTab(prefix + "/add", $('#form-job-add').serialize());
+	        }
+	    }
+	</script>
+</@footer>
+</@pageTheme>

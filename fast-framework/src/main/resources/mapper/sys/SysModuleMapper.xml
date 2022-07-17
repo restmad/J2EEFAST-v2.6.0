@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysModuleMapper">
+
+    <sql id="selectSysModuleVo">
+        SELECT id, module_code, module_name, description, main_class_name, icon,
+        current_version, upgrade_info, status, create_by, del_flag , create_time,
+        update_by, update_time, remark FROM sys_module
+    </sql>
+
+    <select id="findModuleByRoleIds" resultType="com.j2eefast.framework.sys.entity.SysModuleEntity">
+		SELECT DISTINCT u.id, u.module_code, u.module_name, u.icon,u.status FROM sys_module u
+		LEFT JOIN sys_role_module ur ON ur.module_code = u.module_code WHERE
+		u.del_flag = '0' AND u.status = '0'  AND
+        ur.role_id IN
+        <foreach item="id" collection="ids"  open="(" separator="," close=")">
+			 #{id}
+		</foreach>
+	</select>
+
+    <select id="findModules" resultType="com.j2eefast.framework.sys.entity.SysModuleEntity">
+        SELECT u.id, u.module_code, u.module_name, u.icon FROM sys_module u  WHERE
+        u.del_flag = '0' AND u.status = '0' ORDER BY u.id DESC
+    </select>
+	
+    <update id="setStatus">
+		UPDATE sys_module SET status = #{status} WHERE id =
+		#{id}
+	</update>
+
+    <update id="setVersion">
+		UPDATE sys_module SET current_version = #{currentVersion}, upgrade_info=#{upgradeInfo} WHERE id =
+		#{id}
+	</update>
+
+</mapper>

@@ -1,0 +1,223 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark=true>
+<@header title="产品许可"/>
+<section class="section-content">
+    <div class="error-page">
+        <div class="headline text-aqua">&nbsp; <i class="fa fa-shield"></i></div>
+        <div class="error-content">
+            <h3 style="font-weight: bold">${i18n("安全信息")}</h3>
+            <p>
+                 ${i18n("非常感谢您对J2eeFAST的认可与支持,我们始终秉承开源免费,安全稳定!")}
+                <br/>
+                <br/>    ${i18n("机器码是")}：${fastSN}
+                <br/>    ${i18n("产品名称")}：${productName}
+                <br/>    ${i18n("技术支持")}：j2eeFast
+                <br/> <span style="font-weight: bold"> ${i18n("最大在线人数")}：${onlineNum}</span>
+                <br/><span style="font-weight: bold">    ${i18n("授权时间")}：${authorizationTime}</span>
+            </p>
+            <button type="button" class="btn btn-success btn-sm" id="licSelect"><i
+                        class="fa fa-upload"></i> ${i18n("上传许可")}(*.lic)</button>&nbsp
+            <button type="button" class="btn btn-danger btn-sm" id="licDownload"><i
+                        class="fa fa-download"></i> ${i18n("生成许可")}</button>&nbsp
+            <button type="button" class="btn btn-info btn-sm" onclick="opt.modal.closeTab()"><i
+                        class="fa fa-reply-all"></i> ${i18n("关闭页面")}</button>
+        </div>
+        <div class="copyright">
+            &copy; ${config.getCopyrightYear()} ${productName} &nbsp;&nbsp; <a
+                    href="http://www.j2eefast.com">${config.getCompany()} V${config.getVersion()}</a>
+        </div>
+    </div>
+</section>
+<@footer>
+    <script>
+        var prefix = baseURL + "sys/license";
+        /*上传许可文件*/
+        $('#licSelect').click(function(){
+            opt.layer.open({
+                type: 1,
+                area: ['580px', '180px'],
+                title: '<i class="fa fa-upload"></i> ${i18n("上传许可文件")} <i class="fa fa-info-circle" style="color: red"></i>注意:此操作会影响系统运行,谨慎!',
+                shade: 0.3,
+                shadeClose: true,
+                resize: false,
+                scrollbar: true,
+                content: opt.template('licUploadTpl'),
+                btn: ['<i class="fa fa-check"></i> '+$.i18n.text("上传"),
+                    '<i class="fa fa-remove"></i> '+$.i18n.text("取消")],
+                btn1: function(index, layero){
+                    var form = {
+                        inputForm: layero.find('#inputForm'),
+                        f: layero.find('#f').val()
+                    };
+                    if (form.f == '' || !opt.common.endWith(form.f, '.lic')){
+                        opt.warning("${i18n("许可文件不正确，请选择后缀为 .lic 的文件。")}");
+                        return false;
+                    }
+                    var formdata = new FormData();
+                    var file = layero.find('#f')[0].files[0];
+                    formdata.append("licfile", file);
+                    $.ajax({
+                        url: prefix + "/uploadLic",
+                        data: formdata,
+                        type: "POST",
+                        processData: false,
+                        contentType: false,
+                        success: function(result) {
+                            if(result.code == opt.variable.web_status.SUCCESS){
+                                opt.layer.closeAll();
+                                opt.success("${i18n("许可文件上传成功!")}");
+                                location.reload();
+                            }else{
+                                opt.error(result.msg);
+                            }
+                        }
+                    });
+                    return true;
+                }
+            });
+        });
+
+        /*下载许可证书*/
+        $("#licDownload").click(function(){
+            opt.layer.open({
+                type: 1,
+                area: ['600px', '400px'],
+                title: '<i class="fa fa-download"></i>${i18n("下载许可文件")}',
+                shadeClose: true,
+                shade: 0.3,
+                resize: false,
+                scrollbar: true,
+                content: opt.template('licDownloadTpl'),
+                btn: ['<i class="fa fa-check"></i> 确认',
+                    '<i class="fa fa-remove"></i> 取消'],
+                btn1: function(index, layero) {
+                    layero.find('#form-downlod').validate({
+                        rules:{
+                            maxNum:{
+                                maxlength: 4,
+                                minlength: 1,
+                                digits:true
+                            },
+                            sn:{
+                                required:true,
+                                maxlength: 32,
+                                minlength: 32
+                            },
+                            verifyNo:{
+                                required:true,
+                                maxlength: 6,
+                                minlength: 6,
+                                remote: {
+                                    url: prefix + "/checkverifyNoUnique",
+                                    type: "POST",
+                                    dataType: "html",
+                                    data: {
+                                        "sn": function() {
+                                            return opt.common.trim(layero.find('input[name="sn"]').val());
+                                        },
+                                        "verifyNo": function() {
+                                            return opt.common.trim(layero.find('input[name="verifyNo"]').val());
+                                        }
+                                    },
+                                    dataFilter: function(data, type) {
+                                        return opt.validate.unique(data);
+                                    }
+                                }
+                            }
+                        },
+                        messages: {
+                            "verifyNo":{
+                                remote: "${i18n("机器码或者验证码不正确,请仔细核对!")}"
+                            },
+                            maxNum:"只能是数字,最大4位"
+                        },
+                        focusCleanup: true
+                    });
+                    if(layero.find('#form-downlod').validate().form()){
+                        $.ajax({
+                            url: prefix + "/creatLicense",
+                            data: layero.find('#form-downlod').serialize(),
+                            type: "POST",
+                            dataType: 'json',
+                            success: function(result) {
+                                if(result.code == opt.variable.web_status.SUCCESS){
+                                    downLoadXls(prefix+"/download?path="+result.path + "&checkCode=" + result.checkCode);
+                                    opt.layer.closeAll();
+                                    return;
+                                }else{
+                                    opt.error(result.msg);
+                                }
+                            }
+                        })
+                    }
+                }
+            });
+        });
+
+        function downLoadXls(url){
+            var judgeDiv = document.getElementById("dwDiv");
+            if(judgeDiv!=null){
+                document.body.removeChild(judgeDiv);
+            }
+            var divObj = document.createElement("div");
+            divObj.id="dwDiv";
+            var aObj = document.createElement("a");
+            aObj.href=encodeURI(url);
+            aObj.id = "hrefFile";
+            divObj.appendChild(aObj);
+            document.body.appendChild(divObj);
+            document.getElementById("hrefFile").click();
+        }
+    </script>
+<script id="licUploadTpl" type="text/template">//<!--
+<form id="inputForm" method="post" enctype="multipart/form-data" class="form-horizontal mt20 mb10">
+        <label class="control-label col-xs-5"><span class="required">*</span> ${i18n("许可文件")}(.lic)：</label>
+        <div class="col-xs-7">
+            <input type="file" id="f" name="f" style="padding-top: 4px;"/>
+        </div>
+</form>
+//-->
+</script>
+ <script id="licDownloadTpl" type="text/template">//<!--
+    <form class="layui-form" action="" id="form-downlod" class="mt20">
+        <div class="layui-form-item">
+		</div>
+		<div class="layui-form-item">
+	    	<label class="layui-form-label"><span style="color: red; ">*</span>${i18n("机器码")}:</label>
+	    	<div class="layui-input-inline">
+	    		<input type="text"  name="sn"  maxlength="32" placeholder="${i18n("机器码32位")}" autocomplete="off" class="form-control">
+	    	</div>
+		</div>
+		<div class="layui-form-item">
+	    	<label class="layui-form-label"><span style="color: red; ">*</span>${i18n("验证码")}:</label>
+	    	<div class="layui-input-inline">
+	    		<input type="text"  name="verifyNo" maxlength="6" placeholder="${i18n("验证码6位")}" autocomplete="off" class="form-control">
+	    	</div>
+		</div>
+		<div class="layui-form-item">
+	    	<label class="layui-form-label">${i18n("最大在线人数")}:</label>
+	    	<div class="layui-input-inline">
+	    		<input type="text"  name="maxNum" maxlength="4" placeholder="${i18n("不是必输(默认不限制),如果需要输入数字")}" autocomplete="off" class="form-control">
+	    	</div>
+		</div>
+		<div class="layui-form-item m0">
+	    	<label class="layui-form-label">${i18n("IP")}:</label>
+	    	<div class="layui-input-inline">
+	    		<input type="text"  name="ip" placeholder="${i18n("不是必输(默认不限制),如果需要验证则输入.多个IP,隔开")}" autocomplete="off" class="form-control">
+	    	</div>
+		</div>
+		<div class="layui-form-item">
+	    	<label class="layui-form-label"></label>
+	    	<div class="layui-input-inline">
+	    		<a href="javascript:show()">什么是机器码与验证码?</a>
+	    	</div>
+		</div>
+	</form>
+	<script>
+            function show() {
+                 opt.modal.openView("verifySn.png","${ctxStatic}/static/img/verifySn.png",800,700);
+            };
+    </script>//-->
+ </script>
+</@footer>
+</@pageTheme>

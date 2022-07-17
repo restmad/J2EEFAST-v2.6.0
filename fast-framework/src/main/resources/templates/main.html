@@ -1,0 +1,627 @@
+<#include "/common/defaultEngine.html">
+<@pageTheme mark=true>
+<@header title="主页"/>
+    <div class="row  border-bottom white-bg dashboard-header">
+        <div class="col-sm-8">
+            <h2>J2eeFAST 开源平台</h2>
+            <p class="pt5">
+            J2eeFAST 是一个 Java EE 企业级快速开发平台，<strong><mark>致力于打造中小企业最好用的开源免费的后台框架平台。</mark></strong>
+                系统基于（Spring Boot、Spring MVC、Apache Shiro、MyBatis-Plus、Freemarker、Bootstrap、AdminLTE）经典技术开发，
+                系统内置核心模块包含众多常用基础功能(在线代码生成功能、组织机构、角色用户、菜单及按钮授权、数据权限、系统参数、license认证、BPM工作流、多租户、在线报表等)，
+                <mark><strong>让你用最低的成本、最高的效率，开发项目，她也适合新手朋友练手</strong></mark>。同时具备，<mark><strong>界面简洁美观、高效、安全、源码可控、版本迭代快、免费技术交流群</strong></mark>等特点。她适用于所有Web应用，她会成为你快速开发项目的好帮手。
+            </p>
+            </br>
+            <p>
+                <b>当前版本：</b><span class="label label-warning">v${config.getVersion()}</span>
+            </p>
+        </div>
+        <div class="col-sm-4">
+            <h4>技术选型：</h4>
+            <ol>
+                <li>核心框架：Spring Boot 2.X </li>
+                <li>安全框架：Apache Shiro</li>
+                <li>模板引擎：Freemarker</li>
+                <li>工作流引擎：Flowable 6.6.0</li>
+                <li>前端：AdminLTE 2.3.8, Bootstrap 3.3.7, Bootstrap-Table 1.11.0, JQuery 3.3.1</li>
+                <li>持久层框架：MyBatis-Plus 3.X</li>
+                <li>定时任务: Quartz</li>
+                <li>数据库连接池：Druid 1.2.6</li>
+                <li>工具类：Hutool 5.7.6</li>
+                <li>更多……</li>
+            </ol>
+        </div>
+    </div>
+    <div class="gray-bg mt10">
+        <div class="row">
+            <div class="col-sm-4 pr0">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>更新日志 <i class="fa fa-file-text-o"></i></h5>
+                    </div>
+                    <div class="ibox-content no-padding">
+                        <div class="panel-body">
+                            <div class="panel-group" id="version">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v26" aria-expanded="true">v2.6.0<code class="pull-right">2022.05.01</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v26" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 优化系统登录页面</li>
+                                                <li>2. 修改系统登录加密方式</li>
+                                                <li>3. 修复两个上传组件BUG</li>
+                                                <li>4. 新增模块过多导致顶部样式混乱问题</li>
+                                                <li>5. 新增短信登录</li>
+                                                <li>6. 优化系统前端缓存问题、大幅提示系统流畅度</li>
+                                                <li>7. 新增一个新的主题颜色</li>
+                                                <li>8. 新增代码编辑组件</li>
+                                                <li>9. 新增视图引导插件</li>
+                                                <li>10.优化表格插件</li>
+                                                <li>11.新增多国语言系统配置功能</li>
+                                                <li>12.新增TAB栏拖拽功能</li>
+                                                <li>10.增强INPUT组件、新增时间范围选择</li>
+                                                <li>11.新增JU报表代码、基于UREPORT2深度优化定制</li>
+                                                <li>12.大幅定制JU报表</li>
+                                                <li>13.提升JU报表设计器加载速度</li>
+                                                <li>14.新增报表分享功能</li>
+                                                <li>15.新增自定义表格功能(卡片、列表可以自定义实现)</li>
+                                                <li>16.修复默认密码安全级别问题</li>
+                                                <li>17.新增证书过期、失效处理方案</li>
+                                                <li>18.新增证书无效提示功能</li>
+                                                <li>19.增强JU报表功能,支持数据库分页预览。</li>
+                                                <li>20.支持报表分页打印当前页面，打印全部页面。</li>
+                                                <li>21.修复打包时差问题</li>
+                                                <li>22.抽离表格、树表、树JS</li>
+                                                <li>23.修复组件在页面动态使用时异常问题</li>
+                                                <li>24.优化系统打包问题</li>
+                                                <li>25.新增表格获取字典方式</li>
+                                                <li>26.新增前端国密加密算法案例</li>
+                                                <li>27.优化登录方式 用户、手机、其他</li>
+                                                <li>28.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v25" aria-expanded="true">v2.5.0<code class="pull-right">2021.08.15</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v25" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 升级mybatisplus到最新版本3.4.3</li>
+                                                <li>2. 升级Flowable 工作流引擎到最新版本6.6.0</li>
+                                                <li>3. 升级hutool到 5.7.6</li>
+                                                <li>4. 升级swagger到 3.0.0</li>
+                                                <li>5. 升级fastjson到最新版1.2.76</li>
+                                                <li>6. fix: issues #I3BOFQ sql注入问题</li>
+                                                <li>7. 修复添加SQLServer数据库源问题</li>
+                                                <li>8. 修复富文本最大化显示问题</li>
+                                                <li>9. 登录滑动验提示图片新增可配置路径</li>
+                                                <li>10.新增初始化数据库、打war包脚本</li>
+                                                <li>11.修改字典表格链接样式</li>
+                                                <li>12.增加ftp依赖</li>
+                                                <li>10.新增首页图标统计样例</li>
+                                                <li>11.新增公司部门编码字段</li>
+                                                <li>12.新增复杂表格、多表联动等演示案例</li>
+                                                <li>13.优化树、表组件</li>
+                                                <li>14.fix: shiro 共享session会话到redis逻辑问题导致切换用户异常情况</li>
+                                                <li>15.优化访问更新redis频率</li>
+                                                <li>16.升级echarts 图表统计到最新版本</li>
+                                                <li>17.新增评论插件</li>
+                                                <li>18.新增系统内部消息评论</li>
+                                                <li>19.调整样式两个登录页面新增多租户选择、优化页面样式、新增主题样式</li>
+                                                <li>20.新引入ace 代码编辑器插件</li>
+                                                <li>21.系统新增多租户模式(SAAS)</li>
+                                                <li>22.整合ureport2 报表插件</li>
+                                                <li>23.新增复杂表格设置问题</li>
+                                                <li>24.修复冻结表格窗体变化导致样式错位问题</li>
+                                                <li>25.优化表格样式</li>
+                                                <li>26.改进启动多次加载系统参数问题</li>
+                                                <li>27.修复用户在线情况不准确问题</li>
+                                                <li>28.新增通过配置实现不同角色展示不同首页</li>
+                                                <li>29.改进系统自动脚本升级</li>
+                                                <li>30.新增日志记录访问代理信息</li>
+                                                <li>31.新增动态表名、数据量大的时候可以做分表处理</li>
+                                                <li>32.修复日志不记录异常情况，耗时统计错误问题、新增记录代理信息字段</li>
+                                                <li>33.整合工作流到系统支持多租户功能</li>
+                                                <li>34.优化查询页面查询条件过多显示问题</li>
+                                                <li>35.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v21" aria-expanded="true">v2.2.1<code class="pull-right">2021.02.04</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v21" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 升级mybatisplus到最新版本3.4.2.</li>
+                                                <li>2. 新增数据库脚本自动升级</li>
+                                                <li>3. 适配恶心的IE浏览器最低适配IE10</li>
+                                                <li>4. 修复添加SQLServer数据库源问题</li>
+                                                <li>5. 修复多源数据JTA事务问题</li>
+                                                <li>6. 新增多源数据支持Mapper接口注解</li>
+                                                <li>7. 修复表格显示图片点击事件问题</li>
+                                                <li>8. 优化适配移动端</li>
+                                                <li>9. linux环境升级、启动脚本备份文件无目录问题</li>
+                                                <li>10.修复多源数据库代码生成切换数据库问题</li>
+                                                <li>11.修复oracle兼容问题</li>
+                                                <li>12.修复代码生成器生成头像问题/li>
+                                                <li>13.修复适配数据库执行语句问题</li>
+                                                <li>14.新增金额转换中文通用方法</li>
+                                                <li>15.修复代码生成div标签问题</li>
+                                                <li>16.调整文件上传考虑事务问题、不删除文件</li>
+                                                <li>17.移除项目pom文件多余配置</li>
+                                                <li>18.新增系统默认配置文件</li>
+                                                <li>19.简化配置文件</li>
+                                                <li>20.移除代码默认密码字段</li>
+                                                <li>21.新增base64字符判断公用方法</li>
+                                                <li>22.优化图片上传支持直接Base64字符</li>
+                                                <li>23.新增表格通过id获取行对象数据</li>
+                                                <li>24.修复删除server.servlet.context-path 导致登录异常问题</li>
+                                                <li>25.修复锁屏css应用问题</li>
+                                                <li>26.修复防御CSRF攻击导致访问问题</li>
+                                                <li>27.修复项目路径问题导致工作流页面404问题</li>
+                                                <li>28.修复代码生成器id上传文件id问题</li>
+                                                <li>29.移除redis开启控制</li>
+                                                <li>30.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            	<div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v20" aria-expanded="true">v2.2.0<code class="pull-right">2020.12.22</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v20" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 优化新建tab页面方法、处理数据异常问题.</li>
+                                                <li>2. 正式移除include.html模板引擎</li>
+                                                <li>3. 兼容pgsql导致字段类型异常问题</li>
+                                                <li>4. 修复代码生成主子表预览字段问题</li>
+                                               	<li>5. 修复多级菜单联动问题</li>
+												<li>6. 修复#I284V7复杂表头设置无效问题</li>
+												<li>7. 修复页面同时多个表格属性firstLoad=false 异常情况</li>
+												<li>8. 代码生成器新增字段校验方式</li>
+												<li>9. 修复表格记住我字段避免与系统冲突问题</li>
+												<li>10.Druid升级到1.1.22版本</li>
+												<li>11.升级 oshi 5.3.6 jna 5.6.0 兼容最新mac系统</li>
+												<li>12.修项目启动随机生成shiro密钥/li>
+												<li>13.项目默认关闭记住我功能</li>
+												<li>14.修改sys_area表字段名称</li>
+												<li>15.优化系统适配oracle数据库</li>
+												<li>16.新增系统核心模块支持SqlServer数据库</li>
+												<li>17.新增系统配置实现记住我功能</li>
+												<li>18.优化权限字符控制</li>
+												<li>19.优化新建菜单出现新标签</li>
+												<li>20.修复报表导出被拦截问题</li>
+												<li>21.去除系统参数配置版本号</li>
+												<li>22.优化弹窗遮罩</li>
+                                                <li>23.调整项目开源协议</li>
+                                                <li>24.支持手动配置实现是否支持分布式事务</li>
+                                                <li>25.修改系统表字段出现的数据库关键字问题</li>
+                                                <li>25.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v11" aria-expanded="true">v2.1.1<code class="pull-right">2020.11.30</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v11" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 系统核心功能全面支持PostgreSql数据库.</li>
+                                                <li>2. 修复表格选择组件查询不能下拉问题</li>
+                                                <li>3. 升级阿里云OSS依赖</li>
+                                                <li>4. 组件支持阿里云OSS</li>
+                                               	<li>5. 调整项目结构移除system模块</li>
+												<li>6. 修复多选表格组件回显勾选问题</li>
+												<li>7. 增强输入组件支持日期时间选择</li>
+												<li>8. 细化前端模板引擎libs引入JS,按需引入减少无关JS引入</li>
+												<li>9. 优化表格边框设置、允许表格列拉伸、支持通过参数配置是否需要显示边框</li>
+												<li>10.新增表单单元格过长使用隐藏函数可以复制单元格内容</li>
+												<li>11.升级Spring Boot 2.2.10.RELEASE 版本阻止安全漏洞(CVE-2020-5421)</li>
+												<li>12.修复日志查询业务表格字段过长显示不友好问题</li>
+												<li>13.修复安全认证关闭，登录异常问题</li>
+												<li>14.修复树表父子节点错乱问题</li>
+												<li>15.修改登录图片修改成base64</li>
+												<li>16.修复角色管理序号字段排序问题</li>
+												<li>17.优化登录安全认证</li>
+												<li>18.新增文件预览器支持gif预览</li>
+												<li>19.移除多余文件</li>
+												<li>20.优化数据库自动填充delFlag字段</li>
+												<li>21.修复mybatis-plus配置无效问题</li>
+												<li>22.优化Shiro 密钥问题</li>
+                                                <li>23.升级Oshi到最新版本 5.2.5</li>
+                                                <li>24.升级Shiro到最新版 1.7.0,阻止权限绕过漏洞</li>
+                                                <li>25.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v10" aria-expanded="true">v2.1.0<code class="pull-right">2020.10.20</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v10" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 增加core中的分步式锁注解，实现业务id方式的注解锁.</li>
+                                                <li>2. 增加User View页面的权限树，显示该用户已获取的权限</li>
+                                                <li>3. 将Shiro的自己定义url filter移动配置application.yml</li>
+                                                <li>4. 优化shiro权限,优化session管理</li>
+                                                <li>5. 增加select组件的view方式</li>
+                                                <li>6. 增加了fastJS.js中获取菜单的函数，用于打开指定的页面</li>
+                                                <li>7. 优化项目启动配置</li>
+                                                <li>8. 优化登录页面样式</li>
+                                                <li>9. 修复SM4加密jar包引用冲突问题</li>
+                                                <li>10.修复表格主子表子表编辑数据更新问题</li>
+                                                <li>11.修复checkbox组件字典表回显问题</li>
+                                                <li>12.新增树状表支持异步加载及分页显示</li>
+                                                <li>13.优化树表UI细节</li>
+                                                <li>14.扩增表格行titel提示 修复转义问题</li>
+                                                <li>15.优化重写admin-LTE、Gitee登录页面去除多余样式</li>
+                                                <li>16.新增表单导向插件</li>
+                                                <li>17.新增表单导向组件、演示示例</li>
+                                                <li>18.新增信息通知演示示例</li>
+                                                <li>19.新增主页面加载动画</li>
+                                                <li>20.修复图片剪切组件上传大小限制问题</li>
+                                                <li>21.优化主要样式、与便签样式</li>
+                                                <li>22.屏蔽登录提示音</li>
+                                                <li>23.新增一套Ionicons 系统图标. 完全融合系统方便使用</li>
+                                                <li>24.升级fastjson到最新版1.2.74</li>
+                                                <li>25.新增系统防护请求伪造（CSRF）攻击、通过配置文件控制</li>
+                                                <li>26.去除系统include.html模板引用</li>
+                                                <li>27.其他细节优化</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v9" aria-expanded="true">v2.0.9<code class="pull-right">2020.09.06</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v9" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 解决登录IP转换位置接口不够用问题.</li>
+                                                <li>2. 修复前端表格插件显示跳转问题</li>
+                                                <li>3. 优化前端页面渲染</li>
+                                                <li>4. 优化shiro权限,优化session管理</li>
+                                                <li>5. 新增对最大在线人数控制，证书控制.</li>
+                                                <li>6. 优化登录并发控制</li>
+                                                <li>7. 优化组件规范名称</li>
+                                                <li>8. 新增系统文件管理</li>
+                                                <li>9. 优化上传文件控制</li>
+                                                <li>10.解决左侧菜单适配高度滑动问题,解决小窗口菜单点击出现重叠问题</li>
+                                                <li>11.新增表格动态增减行数据</li>
+                                                <li>12.新增大数据表格选择组件</li>
+                                                <li>13.新增右侧滑动弹出窗口</li>
+                                                <li>14.新增颜色选择器</li>
+                                                <li>15.优化视频播放器</li>
+                                                <li>16.升级shiro到最新版本1.6.0 权限绕过漏洞CVE-2020-13933</li>
+                                                <li>17.升级fastjson到最新版1.2.73</li>
+                                                <li>18.修复打包生成Windows命令文件</li>
+                                                <li>19.修复代码生成管理人员字段、修复百度富文本路径问题</li>
+                                                <li>20.优化表单验证只有id报错问题</li>
+                                                <li>21.修改默认打包不打工作流模块</li>
+                                                <li>22.去掉系统google字体</li>
+                                                <li>23.新增系统部分引用功能标注，作者与申明</li>
+                                                <li>24.修复前端请求获取异常问题</li>
+                                                <li>25.新增请求控制实体类字段输出、敏感数据转换提供安全性</li>
+                                                <li>26.修改弹出Tab框细节</li>
+                                                <li>27.优化系统移动设备适配问题</li>
+                                                <li>28.新增war打包</li>
+                                                <li>29.其他细节优化</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v8" aria-expanded="true">v2.0.8<code class="pull-right">2020.08.10</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v8" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 解决issues #I1LLJX 问题,页面多个表格回调混乱问题.</li>
+                                                <li>2. 修复用户头像不存在、或者头像地址异常显示问题</li>
+                                                <li>3. 修复CVE-2020-11996 | Apache Tomcat HTTP/2拒绝服务漏洞</li>
+                                                <li>4. 修复JAT 设置日志名称路径无效问题</li>
+                                                <li>5. 修改输入框后图标带点击事件样式.</li>
+                                                <li>6. 优化页面ibox卡片样式UI</li>
+                                                <li>7. 新增登录验证码类型[支持算数格式]</li>
+                                                <li>8. 修复系统监控获取硬盘信息光驱问题</li>
+                                                <li>9. 修复表格冻结列问题</li>
+                                                <li>10.优化表格冻结列样式</li>
+                                                <li>11.扩增字典表数据值长度</li>
+                                                <li>12.新增上传组件</li>
+                                                <li>13.优化代码生成器新增关联公司机构，支持生成TAB页面</li>
+                                                <li>14.新增第三方登录集成JustAuth插件</li>
+                                                <li>15.新增上传文件管理表与业务关联表</li>
+                                                <li>16.代码生成器支持单独生成实体类，支持代码生成业务关联上传组件</li>
+                                                <li>17.支持上传信息在线预览功能，fastJS.js 新增打开视图方法</li>
+                                                <li>18.新增多级联动控件(未优化完),新增多级异步联动示例</li>
+                                                <li>19.项目文档转移至[语雀]、Gitee WIKI文档不在维护、更新</li>
+                                                <li>20.新增无密登录方法</li>
+                                                <li>21.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v7">v2.0.7<code class="pull-right">2020.06.23</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v7" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 删除多余依赖</li>
+                                                <li>2. @paradisehere 修复新建菜单，尚未新建菜单时左侧菜单栏404报错</li>
+                                                <li>3. 新增一个表单显示国际化案例</li>
+                                                <li>4. @临时的 增加了代码产生模块表构结刷新功能</li>
+                                                <li>5. @临时的 代码生成模块修正checkbox在增删改查，列表使用问题</li>
+                                                <li>6. @临时的 增加了一个单表的增删改查范例，基本包含了目前的所有表单控件.</li>
+                                                <li>7. 修复代码生成页面大量空格格式问题</li>
+                                                <li>8. 新增多级菜单演示</li>
+                                                <li>9. 修复代码生成器选择生成路径获取本地磁盘有光驱报错问题</li>
+                                                <li>10.修复弹窗加载遮罩问题</li>
+                                                <li>11.重构项目系统数据权限</li>
+                                                <li>12.重构前端页面布局</li>
+                                                <li>13.新增前端组件功能</li>
+                                                <li>14.优化项目启动</li>
+                                                <li>15.升级fastjson 1.2.69, 防止安全漏洞</li>
+                                                <li>16.新增系统手动热加载mapper.xml, 修改mapper文件无需重启项目,配合开发工具到此本项目开发无需重启项目整体实现热加载</li>
+                                                <li>17.新增前端引擎使用，组件使用demo</li>
+                                                <li>18.新增登录提示音</li>
+                                                <li>19.修复bootstrap-table.js源码压缩阅读不友好问题</li>
+                                                <li>20.新增表格行title提示</li>
+                                                <li>21.优化用户登录解密异常问题</li>
+                                                <li>22.重构项目定时任务模块</li>
+                                                <li>23.修改权限控制，数据控制精确到菜单权限上.便于更加细致化的控制</li>
+                                                <li>24.layer.js 增强type=2 iframe 层POST可以POST 提交</li>
+                                                <li>25.参数管理、字典管理新增缓存清除功能,便于开发清除缓存</li>
+                                                <li>26.新增用户查询侧边栏关联机构</li>
+                                                <li>27.优化其他细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v6">v2.0.6<code class="pull-right">2020.05.17</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v6" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 新增BPM 工作流模块</li>
+                                                <li>2. 修复登陆页面安全key cookie超时导致登陆异常问题</li>
+                                                <li>3. 新增报表导出功能</li>
+                                                <li>4. 修改fastJS.js 支持报表导出</li>
+                                                <li>5. 修复用户删除问题,不能自身删除自身</li>
+                                                <li>6. 修复ie版本过低提示页面问题.</li>
+                                                <li>7. 修改@MapperScan注解到配置文件,便于二次开发</li>
+                                                <li>8. 使用Hutool获取硬件信息解决获取机器码兼容性问题</li>
+                                                <li>9. 升级layer到3.1.1最新版本,解决监听窗口拉伸动作问题</li>
+                                                <li>10.修复国际化切换[繁体]异常问题</li>
+                                                <li>11.首页新增[便签]小工具</li>
+                                                <li>12.修复菜单层级问题,理论可以支持无限级</li>
+                                                <li>13.新增大量文档</li>
+                                                <li>14.修复部分细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v5">v2.0.5<code class="pull-right">2020.05.10</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v5" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 优化项目打包流程,call mvn install 一键打gz包</li>
+                                                <li>2. 修改Yml工具类增强获取文件</li>
+                                                <li>3. 修改打包运行内存</li>
+                                                <li>4. 修复新增模块404异常,编辑菜单模块提交重复问题</li>
+                                                <li>5. 修复菜单缓存多个模块问题</li>
+                                                <li>6. 优化页面部分窗口小图标</li>
+                                                <li>7.修复在使用Nginx反向代理, 获取真实IP问题</li>
+                                                <li>8.修复系统设置默认语言不生效问题</li>
+                                                <li>9.修复mac系统获取机器码异常问题,在此感谢@Mico、@AKAI 提供的测试与代码</li>
+                                                <li>10.新增系统兼容Oracle,到此J2eeFAST 已经可以同时兼容Mysql,与Orcale.其他支持可以自行扩增</li>
+                                                <li>11.修改对多源数据库支持,改成数据库配置形式可以无限扩展,实时生效。</li>
+                                                <li>12.修复前端界面不能获取语言不能通过cookie获取问题.</li>
+                                                <li>13.新增启动扫描配置文件</li>
+                                                <li>14.修复因网络变动而导致机器码变动的情况.</li>
+                                                <li>15.新增502页面,主要用于配合nginx反向代理使用.当服务器升级期间通过nginx引导502页面</li>
+                                                <li>16.修复若干细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v4">v2.0.4<code class="pull-right">2020.04.11</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v4" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 新增百度ueditor富文本编辑器更换之前编辑器</li>
+                                                <li>2. 增强ueditor 新增在线删除功能,修改ueditor 完全适配fastos,页面引入直接使用</li>
+                                                <li>3. 增加上传图片添加水印</li>
+                                                <li>4. 修改公告展示页面，改用iframe引入确保页面所见即所得</li>
+                                                <li>5. 修复授权角色选中值丢失情况</li>
+                                                <li>6. 修复表格初始化选中，获取选中行值丢失问题</li>
+                                                <li>7.修复TAB栏菜单刷新/TAB切换刷新问题</li>
+                                                <li>8.修复定时任务功能cron工具 不能显示最近执行时间，查询列表新增下次执行时间字段</li>
+                                                <li>9.新增3套登陆页面风格,可以再后台配置默认风格</li>
+                                                <li>10.整合Spring注解Redis缓存,解决Redis故障或者不可用情况任然可以执行方法获取参数</li>
+                                                <li>11.兼容不配置Redis缓存数据库项目也可以运行</li>
+                                                <li>12.解决初次登陆显示问题</li>
+                                                <li>13.登陆页面主页面增加页面压缩减低易读性，提高安全性。此功能可以全局开启</li>
+                                                <li>14.完善国际化字段</li>
+                                                <li>15.去掉Dao包,简化代码</li>
+                                                <li>16.调整包名统一规范</li>
+                                                <li>17. 优化代码，修复若干细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v3">v2.0.3<code class="pull-right">2020.03.28</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v3" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. fastjson升级1.2.67 阻止漏洞</li>
+                                                <li>2. 修复tab菜单关闭当前BUG</li>
+                                                <li>3. 修复浏览器版本底,提示页面404问题</li>
+                                                <li>4. 新增yml字段加密写法</li>
+                                                <li>5. 新增yml文件敏感信息加密处理</li>
+                                                <li>6. 新增信息加密测试类</li>
+                                                <li>7. 感谢@<u>wangyu</u> 提出问题，修改公司,地区 顶级节点报错问题</li>
+                                                <li>8. 修复树表格 展开/折叠 BUG</li>
+                                                <li>9. 升级Swagger到2.9.2 新增swagger-bootstrap-ui 优化接口展示</li>
+                                                <li>10. 新增公告发布功能.信息延迟推送，可设置时效性。</li>
+                                                <li>11. 修复修改头像点击多次弹出多个对话框情况</li>
+                                                <li>12. 修改定时任务可以选择cron执行表达式，方便添加任务</li>
+                                                <li>13. 统一处理前端传入日期格式转换</li>
+                                                <li>14. 修复若干细节</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h5 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v2">v2.0.2<code class="pull-right">2020.03.20</code></a>
+                                        </h5>
+                                    </div>
+                                    <div id="v2" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>1. 新增产品许可功能</li>
+                                                <li>2. 系统启动验证证书是否合法</li>
+                                                <li>3. 修改用户、权限页面滑动按钮获取表ID数据丢失导致页面异常情况</li>
+                                                <li>4. 配置文件新增项目参品名称、license证书、公钥存放位置字段</li>
+                                                <li>5. 新增测试数据SQL</li>
+                                                <li>6. fastJS.js 新增页面模板引擎,优化部分代码</li>
+                                                <li>7. 删除多余类与无用的引用</li>
+                                                <li>8. 针对Apache Shiro Padding Oracle导致远程代码执行漏洞,Apache Shiro 1.4.1 升级 1.4.2 安全版本</li>
+                                                <li>9. 感谢@<u>凌晨雨薇</u>提出的问题, 修复登陆页面免登录记住我BUG,但是作者建议此功能正式项目不用此功能.有远程执行风险</li>
+                                                <li>10. 测试模式定时任务不执行问题</li>
+                                                <li>11. 修复删除操作日志报错问题</li>
+                                                <li>12. 其他细节优化</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#version" href="#v0">v2.0.1<code class="pull-right">2020.03.01</code></a>
+                                        </h4>
+                                    </div>
+                                    <div id="v0" class="panel-collapse collapse">
+                                        <div class="panel-body">
+                                            <ol>
+                                                <li>FAST云OS系统正式发布(后更名J2eeFAST)</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 style="color: red">关于系统 <i class="fa fa-info-circle"></i></h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p>
+                            <i class="fa fa-snapchat-ghost"></i>：
+                            J2eeFAST (快速开发开源系统)名字由来:包含作者对于软件开发的美好幻想，希望软件开发变的快速而简单，每个人都能分享自己的技术从而达到快速又强大的软件系统,让我们有更多的时间去陪伴家人!<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;你可能在本系统中看到众多优秀开源项目的影子，因为她本身集成了众多优秀的开源项目精华功能，在这种环境中成长的，但是她目前还有很多缺点，
+                            希望大神们嘴下留情。如果你也喜欢开源、喜欢本项目,作者欢迎您的加入,J2eeFAST会因为您的加入而变的更加完善与丰富!
+                        </p>
+                        <p class="mt10"><i class="fa fa-send-o"></i> ：如果本项目对你有帮助<ins><a href="https://gitee.com/zhouhuanOGP/J2EEFAST" target="_blank">请点击Star收藏</a></ins>(<a href="javascript:show()">点击查看</a>),<strong><mark>本项目会长期维护</mark></strong>,若你在使用中有<u>任何问题或建议</u>欢迎在<del><a href="https://gitee.com/zhouhuanOGP/J2EEFAST/issues" target="_blank">码云issue提交问题</a></del>作者会第一时间处理，让我们一起完善J2eeFAST
+                        </p>
+                        <p class="mt5"><i class="fa icon-cursor"></i> 官网：<a href="http://www.j2eefast.com" target="_blank">http://www.j2eefast.com</a>
+                        </p>
+                        <p class="mt5"><i class="fa fa-book"></i> 项目文档：<a href="https://www.yuque.com/u1174484/j2eefast/tv3kee" target="_blank">语雀 文档</a>
+                        </p>
+                        <p class="mt5"><i class="fa fa-cloud-upload"></i> 关于更新：项目现在会放缓更新、优化细节,演示网站会不定期暂停访问,带来不便尽情谅解!
+                        </p>
+                        <p class="mt5"><i class="fa fa-qq"></i> 官方技术交流QQ群：<a href="https://jq.qq.com/?_wv=1027&k=5xTlnN6" target="_blank">805468934①(大群)</a>、<a href="https://jq.qq.com/?_wv=1027&k=mx2H3mNH" target="_blank">805468934②</a>
+                        </p>
+                        <p class="mt5"><i class="fa fa-envelope-open-o"></i> <strong>免责声明：</strong>
+                        <li><strong><a href="https://www.yuque.com/u1174484/j2eefast/mbd8pi" target="_blank" style="color: red;"><u>1. 本项目代码全部开源，免费。但请遵循开源协议!</u></a></strong></li>
+                        <li>2. 不得将 J2eeFAST于危害国家安全、荣誉和利益的行为，不能以任何形式用于非法为目的的行为,否则后果自负.</li>
+                        <li>3. J2eeFAST前身主要用于银行项目,本身很注重安全因素,可以从项目登陆可以看出。再者本身项目100%开源，但是您任需了解是软件皆有漏洞，任何人都无法保证软件100%没有漏洞。所以由本软件漏洞造成损失不予赔偿，同时也不承担任何因使用本软件而产生的相关法律责任。也请在软件上线前进行必要的安全检测，避免安全问题发生.</li>
+                        </p>
+                        <p class="mt10"><i class="fa fa-heartbeat" style="color: red"></i><strong><mark><a href="javascript:pay();" >捐赠-支持作者(点击放大)</a></mark></strong>
+                        <div style="height:240px;width: 500px;box-shadow: 3px 2px 3px 0px rgb(0 0 0 / 20%);">
+                            <a href="javascript:pay();" style="cursor: zoom-in;"><img src="${ctxStatic}/static/img/pay.png" width="100%" height="95%" alt="请使用手机支付宝或者微信扫码支付"></a>
+                        </div>
+                        <p class="mt20">
+                            <a class="btn btn-success btn-outline" href="https://gitee.com/zhouhuanOGP/J2EEFAST" target="_blank">
+                                <i class="fa fa-cloud"> </i> 访问码云
+                            </a>
+                            <a class="btn btn-danger btn-bitbucket" href="https://gitee.com/zhouhuanOGP/J2EEFAST/repository/archive/master.zip" target="_blank">
+                                <i class="fa fa-cloud-download"></i> 下载项目
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<@footer>
+<script type="text/javascript">
+    function show() {
+        opt.modal.openView("collect.png","${ctxStatic}/static/img/collect.png",800,600);
+    }
+
+    function pay() {
+        opt.modal.openView("pay.png","${ctxStatic}/static/img/pay.png",800,500);
+    }
+</script>
+</@footer>
+</@pageTheme>

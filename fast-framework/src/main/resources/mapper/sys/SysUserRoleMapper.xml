@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysUserRoleMapper">
+
+	<select id="findRoleIdList" resultType="long">
+		SELECT role_id FROM sys_user_role WHERE user_id = #{userId}
+	</select>
+
+	<delete id="deleteRoleIdByToUserIdsBatch">
+		DELETE FROM sys_user_role WHERE
+		role_id = #{roleId} AND
+		user_id IN
+		<foreach item="userId" collection="userIds" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</delete>
+
+</mapper>

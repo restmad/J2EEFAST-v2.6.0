@@ -1,0 +1,42 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="部署流程" bodyClass="white-bg" libs=["bootstrapSelect"]/>
+<div class="wrapper wrapper-content ibox-content">
+<@f.form id="form-model-add" class="form-horizontal">
+        <div style="padding:25px 0 0 0;">
+            <input type="hidden"  name="modelId" value="${model.id}"/>
+            <div class="form-group">
+                <label class="col-xs-3 control-label "><span style="color: red; ">*</span>流程名称：</label>
+                <div class="col-xs-8">
+                    <input class="form-control" type="text"  value="${model.name}"  readonly="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label"><span style="color: red; ">*</span>流程Key：</label>
+                <div class="col-xs-8">
+                    <input class="form-control" type="text" value="${model.key}"  readonly="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-3 control-label">${i18n("流程类型")}：</label>
+                <div class="col-xs-8">
+                    <@f.select name="category" dictType="sys_bpm_category" />
+                </div>
+            </div>
+        </div>
+</@f.form>
+    <div class="hr-line-dashed"></div>
+    <div class="row" style="text-align: center;" id="_addTab">
+            <button type="button" class="btn btn-sm btn-primary" onclick="opt.form.submit()"><i class="fa fa-check"></i>${i18n("保存")}</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="opt.modal.close()"><i class="fa fa-reply-all"></i>${i18n("关闭")}</button>
+    </div>
+</div>
+<@footer>
+<script type="text/javascript">
+    var prefix = baseURL + "bpm/model";
+    function submitHandler() {
+        opt.operate.save(prefix + "/add", $('#form-model-add').serialize());
+    }
+</script>
+</@footer>
+</@pageTheme>

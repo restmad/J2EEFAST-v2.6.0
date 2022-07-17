@@ -1,0 +1,352 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="服务监控">
+</@header>
+  <!-- Content Wrapper. Contains page content -->
+	<!-- Main content -->
+    <section class="content mt10">
+     <!-- SELECT2 EXAMPLE -->
+		<div class="box box-widget">
+			<div class="box-header">
+				<i class="fa fa-windows"></i>
+				<div class="box-title"><h5>${i18n("服务器信息")}</h5></div>
+				<div class="box-tools pull-right">
+				   <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+				</div>
+			</div>
+			<!-- /.box-header  -->
+			<div class="box-body">
+				 <table class="table table-striped table-hover">
+				   <tr>
+					 <td>${i18n("服务器名称")}</td>
+					 <td>{{computerName}}</td>
+					 <td>
+						${i18n("操作系统")}
+					 </td>
+					 <td>{{osName}}</td>
+				   </tr>
+					<tr>
+					 <td>${i18n("服务器IP")}</td>
+					 <td>{{computerIp}}</td>
+					 <td>
+						${i18n("系统架构")}
+					 </td>
+					 <td>{{osArch}}</td>
+				   </tr>
+				 </table>
+			   </div>
+
+			<div v-if="loading" class="overlay">
+				<i class="fa fa-refresh fa-spin"></i>
+			</div>
+        </div>
+        
+        <div class="row">
+        <div class="col-md-6">
+
+          <div class="box box-widget">
+            <div class="box-header">
+              <i class="fa fa-microchip"></i>
+              <div class="box-title"><h5>CPU</h5></div>
+              <div class="box-tools pull-right">
+	            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          	  </div>
+            </div>
+            <div class="box-body" >
+				<table class="table table-striped table-hover">
+					<tr>
+					  <th style="width:50%">${i18n("属性")}</th>
+					  <th style="width:50%">${i18n("值")}</th>
+					</tr>
+					<tr>
+					  <td>${i18n("核心数量")}</td>
+					  <td>{{cpuNum}}</td>
+					</tr>
+					 <tr>
+					  <td>${i18n("用户使用率")}</td>
+					  <td v-if="used > 80"><span style="color: red">{{used}} %</span></td>
+					  <td v-else><span style="color:green">{{used}} %</span></td>
+					</tr>
+					 <tr>
+					  <td>${i18n("系统使用率")}</td>
+					   <td v-if="sys > 80"><span style="color: red">{{sys}} %</span></td>
+					  <td v-else><span style="color:green">{{sys}} %</span></td>
+					</tr>
+					<tr>
+					  <td>${i18n("当前空闲率")}</td>
+					  <td v-if="free < 20"><span style="color: red">{{free}} %</span></td>
+					  <td v-else><span style="color:green">{{free}} %</span></td>
+					</tr>
+              </table>
+            </div>
+            <!-- /.box-body -->
+            
+            <!-- Loading (remove the following to stop the loading)-->
+	         <div v-if="loading" class="overlay">
+	           <i class="fa fa-refresh fa-spin"></i>
+	         </div>
+	         <!-- end loading -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        
+        <!-- /.col (left) -->
+        <div class="col-md-6">
+			<div class="box box-widget">
+            <div class="box-header">
+              <i class="fa fa-slack"></i>
+              <div class="box-title"><h5>${i18n("内存")}</h5></div>
+              <div class="box-tools pull-right">
+	            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          	  </div>
+            </div>
+            <div class="box-body">
+				<table class="table table-striped table-hover">
+                <tr>
+                  <th style="width:40%">${i18n("属性")}</th>
+                  <th style="width:30%">${i18n("系统内存")}</th>
+                  <th style="width:30%">${i18n("JVM内存")}</th>
+                </tr>
+                <tr>
+                  <td>${i18n("总内存")}</td>
+                  <td>{{memTotal}} GB</td>
+                  <td>{{jvmTotal}} MB</td>
+                </tr>
+                 <tr>
+                  <td>${i18n("已用内存")}</td>
+                  <td>{{memUsed}} GB</td>
+                  <td>{{jvmUsed}} MB</td>
+                </tr>
+                 <tr>
+                  <td>${i18n("剩余内存")}</td>
+                  <td>{{memFree}} GB</td>
+                  <td>{{jvmFree}} MB</td>
+                </tr>
+                <tr>
+                  <td>${i18n("使用率")}</td>
+                  <td v-if="memUsage > 80"><span  style="color:red">{{memUsage}} %</span></td>
+                  <td v-else><span style="color:green">{{memUsage}} %</span></td>
+                  <td v-if="jvmUsage > 80"><span style="color:red">{{jvmUsage}} %</span></td>
+                  <td v-else><span style="color:green">{{jvmUsage}} %</span></td>
+                </tr>
+              </table>
+            </div>
+            <!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+	         <div v-if="loading" class="overlay">
+	           <i class="fa fa-refresh fa-spin"></i>
+	         </div>
+	         <!-- end loading -->
+          </div>
+          <!-- /.box -->
+        </div>
+        </div>
+
+		<div class="box box-widget">
+			<div class="box-header">
+				<i class="fa fa-database"></i>
+				<div class="box-title"><h5>${i18n("Redis 信息")}</h5></div>
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+				</div>
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<table class="table table-striped table-hover">
+					<tr>
+						<td style="width: 10%">${i18n("版本")}</td>
+						<td style="width: 10%">{{redis.version}}</td>
+						<td style="width: 10%">${i18n("端口")}</td>
+						<td style="width: 10%">{{redis.post}}</td>
+						<td style="width: 10%">${i18n("运行天数")}</td>
+						<td style="width: 10%">{{redis.runTime}}</td>
+						<td style="width: 10%">启动脚本路径</td>
+						<td style="width: 30%">{{redis.runPath}}</td>
+					</tr>
+					<tr>
+						<td>总内存</td>
+						<td>{{redis.totalMemory}}</td>
+						<td>已使用</td>
+						<td>{{redis.runMemory}}</td>
+						<td>KEY总数</td>
+						<td>{{redis.key}}</td>
+						<td>${i18n("配置文件")}</td>
+						<td>{{redis.configPath}}</td>
+					</tr>
+				</table>
+			</div>
+			<!-- /.box-body -->
+			<!-- Loading (remove the following to stop the loading)-->
+			<div v-if="loading" class="overlay">
+				<i class="fa fa-refresh fa-spin"></i>
+			</div>
+		</div>
+
+		<div class="box box-widget">
+	        <div class="box-header">
+	        <i class="fa fa-coffee"></i>
+	          <div class="box-title"><h5>${i18n("Java虚拟机信息")}</h5></div>
+	          <div class="box-tools pull-right">
+	            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+	          </div>
+	        </div>
+	        <!-- /.box-header -->
+	        <div class="box-body">
+	              <table class="table table-striped table-hover">
+	                <tr>
+	                  <td>${i18n("Java名称")}</td>
+	                  <td>{{jvmName}}</td>
+	                  <td>${i18n("Java版本")}</td>
+	                  <td>{{jvmVersion}}</td>
+	                </tr>
+	                <tr>
+	                  <td>${i18n("启动时间")}</td>
+	                  <td>{{jvmStartTime}}</td>
+	                  <td>${i18n("运行时长")}</td>
+	                  <td>{{jvmRunTime}}</td>
+	                </tr>
+	                <tr>
+	                  <td>${i18n("JDK路径")}</td>
+	                  <td>{{jvmHome}}</td>
+	                  <td>${i18n("安装路径")}</td>
+	                  <td>{{sysUserDir}}</td>
+	                </tr>
+	              </table>
+	            </div>
+            <!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+	         <div v-if="loading" class="overlay">
+	           <i class="fa fa-refresh fa-spin"></i>
+	         </div>
+        </div>
+
+        <div class="box box-widget">
+	        <div class="box-header with-border">
+	        <i class="fa fa-hdd-o"></i>
+	          <div class="box-title"><h5>${i18n("磁盘信息")}</h5></div>
+	          <div class="box-tools pull-right">
+	            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+	          </div>
+	        </div>
+	        <!-- /.box-header -->
+	        <div class="box-body">
+	              <table class="table table-striped table-hover">
+	                <tr>
+	                  <th>${i18n("盘符路径")}</th>
+	                  <th>${i18n("文件系统")}</th>
+	                  <th>${i18n("盘符类型")}</th>
+	                  <th>${i18n("总大小")}</th>
+	                  <th>${i18n("可用大小")}</th>
+	                  <th>${i18n("已用大小")}</th>
+	                  <th>${i18n("已用百分百")}</th>
+	                </tr>
+	                <tr v-for="file in sysFile">
+				       <td>{{ file.dirName }}</td>
+	                   <td>{{ file.sysTypeName }}</td>
+	                   <td>{{ file.typeName }}</td>
+	                   <td>{{ file.total }}</td>
+	                   <td>{{ file.free }}</td>
+	                   <td>{{ file.used }}</td>
+	                   <td v-if="file.usage > 80"><span style="color:red">{{file.usage}} %</span></td>
+                 	   <td v-else><span style="color:green">{{file.usage}} %</span></td>
+				    </tr>
+	              </table>
+	            </div>
+            <!-- /.box-body -->
+            <!-- Loading (remove the following to stop the loading)-->
+	         <div v-if="loading" class="overlay">
+	           <i class="fa fa-refresh fa-spin"></i>
+	         </div>
+	         <!-- end loading -->
+        </div>
+     </section>
+    <!-- /.content -->
+<@footer>
+<script type="text/javascript">
+		var vm = new Vue({
+			el:'#__bodyDiv009',
+			data:{
+				loading : true,
+				computerName : '',
+				computerIp :'',
+				osName :'',
+				osArch :'',
+				cpuNum :'0',
+				free :'0',
+				sys:'0',
+				used:'0',
+				memTotal:'0',
+				jvmTotal:'0',
+				memUsed:'0',
+				jvmUsed:'0',
+				memFree:'0',
+				jvmFree:'0',
+				memUsage:0,
+				jvmUsage:0,
+				jvmName:'',
+				jvmVersion:'',
+				jvmStartTime:'',
+				jvmRunTime:'',
+				jvmHome:'',
+				sysUserDir:'',
+				sysFile:[],
+				redis: {},
+			},
+			methods: {
+				getServerInfo: function(init){
+					var __taht = this;
+					$.ajax({
+						type: "POST",
+						url: baseURL + 'sys/server/info/'+init,
+						dataType: "json",
+						success: function(result){
+							if(result.code == 0){//登录成功
+
+								if(init == 0){
+									vm.computerName = result.server.sys.computerName;
+									vm.computerIp = result.server.sys.computerIp;
+									vm.osName = result.server.sys.osName;
+									vm.osArch = result.server.sys.osArch;
+									vm.jvmName = result.server.jvm.name;
+									vm.jvmVersion = result.server.jvm.version;
+									vm.jvmStartTime = result.server.jvm.startTime;
+									vm.jvmRunTime = result.server.jvm.runTime;
+									vm.jvmHome = result.server.jvm.home;
+									vm.sysUserDir = result.server.sys.userDir;
+									vm.sysFile = result.server.sysFiles;
+									vm.redis = result.server.redis;
+								}
+
+								vm.cpuNum = result.server.cpu.cpuNum;
+								vm.free = result.server.cpu.free;
+								vm.used = result.server.cpu.used;
+								vm.sys = result.server.cpu.sys;
+								vm.memTotal = result.server.mem.total;
+								vm.jvmTotal = result.server.jvm.total;
+								vm.memUsed = result.server.mem.used;
+								vm.jvmUsed = result.server.jvm.used;
+								vm.memFree = result.server.mem.free;
+								vm.jvmFree = result.server.jvm.free;
+								vm.memUsage = result.server.mem.usage;
+								vm.jvmUsage = result.server.jvm.usage;
+
+								vm.loading  = false;
+
+								window.setTimeout(function(){
+									__taht.getServerInfo(1)
+								},1500);
+							}else{
+								opt.error(result.msg);
+							}
+						}
+					});
+				}
+			},
+			mounted :function(){
+				this.getServerInfo(0)
+			}
+		});
+</script>
+</@footer>
+</@pageTheme>

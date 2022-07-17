@@ -1,0 +1,367 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+    <@header title="新增用户" bodyClass="white-bg" libs=["bootstrapSelect","table"]/>
+    <div class="wrapper wrapper-content ibox-content">
+        <@f.form id="form-user-add" class="form-horizontal">
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>登录账号：</label>
+                        <div class="col-sm-8">
+                            <@f.input name="username" placeholder="请输入登录账号" required=true helpTip="登录账号数字加字母组合,至少3位"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>归属公司：</label>
+                        <div class="col-sm-8">
+                            <@f.treeselect name="compId" boxTitle="选择归属公司" url="sys/comp/treeData?type=0" expandLevel=true required=true
+                            placeholder="请选择归属公司"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>用户姓名：</label>
+                        <div class="col-sm-8">
+                            <input name="name" id="name" placeholder="请输入用户名称" class="form-control" type="text" maxlength="30" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>归属部门：</label>
+                        <div class="col-sm-8">
+                            <@f.treeselect  name="deptId" boxTitle="请选择归属部门" url="sys/dept/selectZtree" required=true
+                            correlationId="compId" isSelectParent=true  placeholder="请选择归属部门"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>登录密码：</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <@f.input name="password" placeholder="请输入登录密码" required=true type="password" value="${config.getKey('SYS_USER_INITPASSWORD')}"/>
+                                <span class="input-group-addon" title="<@ctx.i18n text = "登录密码,鼠标按下显示密码"/>"
+                                      data-toggle="tooltip"
+                                      data-placement="bottom" data-custom-class="tooltip-warning"
+                                      onmousedown="$('#password').attr('type','text')"
+                                      onmouseup="$('#password').attr('type','password')"><i class="fa fa-fw fa-key"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>多选用户：</label>
+                        <div class="col-sm-8">
+                            <@f.tableselect name="selectuser" boxTitle="多选用户信息" value="1275317360751816706,1275318050307977218,1275318300099751938,1275318721723772930,1275319065379876866,1275319295974322177,1275319483807838210,1286597681510125569"
+                            labelValue = "司马懿,刘备,诸葛亮,孙权,张飞,赵云,关羽,游客用户"
+                            tableInfo = "[{field:'username',title:'账号'},{field:'name',title:'姓名',query: true},{field:'compName',title:'归属公司'},
+                   {field:'deptName',title:'归属机构'},{field:'email',title:'邮箱'},{field:'mobile',title:'手机号码'},
+                   {field:'status',title:'状态',dict:'sys_user_show_hide'},{field:'createTime',title:'创建时间'}]"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>手机号码：</label>
+                        <div class="col-sm-8">
+                            <#--                    <div class="input-group">-->
+                            <@f.input name="mobile"  maxlength="11" butClass="fa fa-fw fa-mobile"  placeholder="请输入手机号码" required=true/>
+                            <#--                    </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>所在岗位：</label>
+                        <div class="col-sm-8">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">邮箱：</label>
+                        <div class="col-sm-8">
+                            <@f.input name="email" class="form-control email" butClass="fa fa-fw fa-envelope" maxlength="50" placeholder="请输入邮箱" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">用户状态：</label>
+                        <div class="col-sm-8">
+                            <@f.switch name="status" value="0"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">子表单信息</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <@table id="bootstrap-table">
+                        <a class="btn btn-success" onclick="addColumn()"><i class="fa fa-plus"></i>&nbsp;<@ctx.i18n text = "新增"/></a>
+                        <a class="btn btn-danger" onclick="remove()">
+                            <i class="fa fa-remove"></i> <@ctx.i18n text = "删除"/>
+                        </a>
+                    </@table>
+                </div>
+            </div>
+        </@f.form>
+        <div class="hr-line-dashed"></div>
+        <div class="row" id="_addTab">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="opt.form.submit()"><i class="fa fa-check"></i><@ctx.i18n text = "保存"/></button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="opt.modal.closeTab()"><i class="fa fa-reply-all"></i><@ctx.i18n text = "关闭"/></button>
+            </div>
+        </div>
+    </div>
+    <@footer>
+        <script type="text/javascript">
+            var prefix = baseURL + "sys/user";
+
+            $(function() {
+                var options = {
+                    pagination: false,
+                    showSearch: false,
+                    showRefresh: false,
+                    showToggle: false,
+                    showColumns: false,
+                    clickToSelect: false,
+                    sidePagination: "client",
+                    rememberSelected: false,
+                    columns: [{
+                        checkbox: true
+                    },
+                        {
+                            field: 'index',
+                            align: 'center',
+                            title: "序号",
+                            formatter: function (value, row, index) {
+                                var columnIndex = opt.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                                return columnIndex + $.table.serialNumber(index);
+                            }
+                        },
+                        {
+                            field: 'name',
+                            align: 'center',
+                            title: '商品名称',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].name' value='%s'>", index, value);
+                                return html;
+                            }
+                        },
+                        {
+                            field: 'weight',
+                            align: 'center',
+                            title: '商品重量',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].weight' value='%s'>", index, value);
+                                return html;
+                            }
+                        },
+                        {
+                            field: 'price',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].price' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'code',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].code' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'no',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].no' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'id',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].id' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'tt',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].tt' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'gg',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].gg' value='%s'>", index, value);
+                                return html;
+                            }
+                        },{
+                            field: 'oo',
+                            align: 'center',
+                            title: '商品价格',
+                            formatter: function(value, row, index) {
+                                var html = opt.common.sprintf("<input class='form-control' type='text' name='goods[%s].oo' value='%s'>", index, value);
+                                return html;
+                            }
+                        }]
+                };
+                $.table.init(options);
+            });
+
+            function addColumn(){
+                var count = $("#" + opt.table.options.id).bootstrapTable('getData').length;
+                var row = {index: count + 1,
+                    name: "",
+                    weight: "",
+                    price: "",
+                    code: "",
+                    no: "",
+                    id: "",
+                    tt: "",
+                    gg: "",
+                    oo: ""};
+                $.table.addColumn(row);
+            }
+
+            function remove(){
+                $.table.removeData();
+            }
+
+            $("#form-user-add").validate({
+                onkeyup: false,
+                rules:{
+                    username:{
+                        minlength: 3,
+                        maxlength: 10,
+                        isUserName: opt.common.trim($("#username").val()),
+                        remote: {
+                            url: prefix + "/checkUserNameUnique",
+                            type: "POST",
+                            dataType: "html",
+                            data: {
+                                "username": function() {
+                                    return opt.common.trim($("#username").val());
+                                }
+                            },
+                            dataFilter: function(data, type) {
+                                return opt.validate.unique(data);
+                            }
+                        }
+                    },
+                    password:{
+                        minlength: 5,
+                        maxlength: 20
+                    },
+                    _role:{
+                        minlength: 1
+                    },
+                    _posts:{
+                        minlength: 1
+                    },
+                    mobile:{
+                        isMobile: opt.common.trim($("#mobile").val()),
+                        remote: {
+                            url: prefix + "/checkMobileUnique",
+                            type: "POST",
+                            dataType: "html",
+                            data: {
+                                "mobile": function() {
+                                    return opt.common.trim($("#mobile").val());
+                                }
+                            },
+                            dataFilter: function(data, type) {
+                                return opt.validate.unique(data);
+                            }
+                        }
+                    }
+                },
+                messages: {
+                    "username": {
+                        remote:"<@ctx.i18n text = "sys.msg.user.already"/>"
+                    },
+                    "mobile":{
+                        remote:"<@ctx.i18n text = "sys.msg.mobile.already"/>"
+                    }
+                },
+                focusCleanup: true
+            });
+
+            function submitHandler() {
+                if (opt.validate.form()) {
+                    // var options = {
+                    //     id:'form-user-add',
+                    //     delete:['compName','deptName'], /*需要删除提交表单数据*/
+                    //     conversion:[ /*需要转数据*/
+                    //         {
+                    //             name:'deptIdList',
+                    //             value:'arr'
+                    //         }
+                    //     ]
+                    // };
+                    // var data = opt.form.dataUp(options);
+                    // var postIds = opt.form.selectSelects("_role");
+                    // var status = $("input[id='status']").is(':checked') == true ? 0 :1;
+                    // // data.push({"name": "status", "value": status});
+                    // data.push({"name": "roleIdList", "value": postIds});
+                    opt.operate.saveTab(prefix + "/add", $('#form-user-add').serialize());
+                }
+            }
+            //
+            //  $(function() {
+            // $("#__roleIdListslt").select2({
+            //     placeholder:"请选择值",
+            //     allowClear: true
+            // });
+            // //     $("#_role").on("change",function(e){
+            //         // e 的话就是一个对象 然后需要什么就 “e.参数” 形式 进行获取
+            //         console.log(opt.form.selectSelects("_role"));
+            //     })
+            //
+            //
+            //     $('#_posts').select2({
+            //         placeholder:"请选择所在岗位",
+            //         allowClear: true
+            //     });
+            //})
+
+            /**
+             * select 回调事件
+             * @param id 那个select控件发出的事件
+             * @param event change 当控件改变时
+             * @param data 选中数据对象
+             */
+            function selectCallback(id, event, data){
+                if(id === "roleIdList"){
+                    console.log("roleIdList:" + data);
+                }else if(id === "postCodes"){
+                    console.log("postCodes:" + data);
+                }
+            }
+        </script>
+    </@footer>
+</@pageTheme>

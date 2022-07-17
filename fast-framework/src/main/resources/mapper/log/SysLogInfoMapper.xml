@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.log.mapper.SysLoginInfoMapper">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+         id AS "id", username AS "username",ipaddr AS "ipaddr", login_location AS "loginLocation", browser AS "browser", os AS "os",
+         mobile AS "mobile", status AS "status", msg AS "msg", login_time AS "loginTime", comp_id AS "compId", user_agent AS "userAgent"
+    </sql>
+
+    <!--  实体栏位  -->
+    <sql id="sysLoginInfoColumns">
+          a.id AS "id",
+          a.username AS "username",
+          a.ipaddr AS "ipaddr",
+          a.login_location AS "loginLocation",
+          a.browser AS "browser",
+          a.os AS "os",
+          a.mobile AS "mobile" ,
+          a.status AS "status",
+          a.user_agent AS "userAgent",
+          a.msg AS "msg",
+          a.login_time AS "loginTime",
+          c.name AS "compName",
+          a.dept_id AS "deptId"
+      </sql>
+
+    <!-- 外联表  -->
+    <sql id="sysLoginInfoJoins">
+        LEFT JOIN sys_comp c ON c.id = a.comp_id
+        LEFT JOIN (SELECT id,parent_ids FROM sys_comp) d  ON a.dept_id = d.id
+    </sql>
+
+	<update id="cleanLog">
+        DELETE FROM sys_login_infor
+    </update>
+
+    <select id="findFirstLoginInfo"  resultType="com.j2eefast.framework.log.entity.SysLoginInfoEntity">
+        SELECT
+        <if test="_databaseId  == 'sqlserver'">
+            TOP 1
+        </if>
+        <include refid="Base_Column_List"/>
+        <choose>
+            <when test="_databaseId == 'oracle'">
+                FROM (SELECT * FROM sys_login_infor WHERE username = #{username}
+                AND status = '00000' ORDER BY login_time ) WHERE rownum=1
+            </when>
+            <otherwise>
+                FROM sys_login_infor
+                WHERE username = #{username}  AND status = '00000' ORDER BY login_time
+            </otherwise>
+        </choose>
+        <if test="_databaseId  == 'mysql' || _databaseId  == 'postgresql'">
+            DESC LIMIT 1
+        </if>
+    </select>
+
+    <insert id="insertLogininfor" parameterType="com.j2eefast.framework.log.entity.SysLoginInfoEntity">
+		insert into sys_login_infor (id,username, ipaddr, login_location, user_agent, browser, os, mobile, status,msg,login_time,comp_id,dept_id,login_type,tenant_id)
+		values (#{id}, #{username}, #{ipaddr}, #{loginLocation}, #{userAgent}, #{browser}, #{os}, #{mobile},#{status},#{msg},#{loginTime},#{compId},#{deptId},#{loginType},#{tenantId})
+	</insert>
+
+    <select id="findPage"  resultType="com.j2eefast.framework.log.entity.SysLoginInfoEntity">
+        SELECT
+        <include refid="sysLoginInfoColumns"/>
+        FROM sys_login_infor a
+        <include refid="sysLoginInfoJoins"/>
+        <where>
+            <if test="username != null and username != ''">
+                AND a.username LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{username}||',%'</when>
+                    <otherwise>CONCAT('%', #{username}, '%')</otherwise>
+                </choose>
+            </if>
+            <if test="ipaddr != null and ipaddr != ''">
+                AND a.ipaddr LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{ipaddr}||',%'</when>
+                    <otherwise>CONCAT('%', #{ipaddr}, '%')</otherwise>
+                </choose>
+            </if>
+            <if test="status != null and status != ''">
+                <if test="status == '-1'">
+                AND a.status != '00000'
+                </if>
+                <if test="status != '-1'">
+                    AND a.status = #{status}
+                </if>
+            </if>
+            <if test="deptId != null and deptId !=''">
+                <if test="_databaseId == 'mysql'">AND (FIND_IN_SET(#{deptId},d.parent_ids)</if>
+                <if test="_databaseId == 'postgresql'">AND ('${deptId}' = ANY(STRING_TO_ARRAY(d.parent_ids, ','))</if>
+                <if test="_databaseId == 'oracle'">AND (INSTR(','||d.parent_ids||',',',${deptId},') > 0</if>
+                <if test="_databaseId == 'sqlserver'">AND (CHARINDEX(','+'${deptId}'+',', ','+d.parent_ids+',') > 0</if>
+                OR a.dept_id = #{deptId})
+            </if>
+            <if test="_databaseId == 'mysql'">
+                <if test="beginTime != null and beginTime != ''">
+                    AND date_format(a.login_time,'%y%m%d') <![CDATA[ >= ]]> date_format(#{beginTime},'%y%m%d')
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    AND date_format(a.login_time,'%y%m%d') <![CDATA[ <= ]]> date_format(#{endTime},'%y%m%d')
+                </if>
+            </if>
+            <if test="_databaseId == 'postgresql'">
+                <if test="beginTime != null and beginTime != ''">
+                    AND a.login_time <![CDATA[ >= ]]> '${beginTime}'::TIMESTAMP
+                </if>
+                <if test="endTime != null  and endTime != ''">
+                    AND a.login_time <![CDATA[ < ]]> ('${endTime}'::TIMESTAMP + '1 day')
+                </if>
+            </if>
+            <!-- 数据范围过滤 -->
+            <if test = "sql_filter !=null and sql_filter!=''">
+                AND ${sql_filter}
+            </if>
+        </where>
+    </select>
+
+</mapper>

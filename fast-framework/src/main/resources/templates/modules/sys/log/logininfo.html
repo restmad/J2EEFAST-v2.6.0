@@ -1,0 +1,136 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="登陆日志" libs=["table"]/>
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+		<@f.form id="logininfor-form">
+		<div class="select-list">
+			<ul>
+				<#--用户是否是最大管理员-->
+				<#if permission.isRole("ADMIN")>
+					<li>
+						<label>${i18n("登录名称")}：</label><input type="text" class="form-control" name="username"/>
+					</li>
+				</#if>
+				<li>
+					<label>${i18n("归属机构")}</label>：
+					<div class="control-div width-150">
+						<@f.treeselect name="deptId" boxTitle="请选择归属机构" url="sys/comp/treeData"
+						expandLevel=true
+						/>
+					</div>
+				</li>
+				<li>
+					<label>${i18n("登录时间")}： </label>
+					<@f.input id="startTime" name="beginTime" type="date" dataCallback="$('#endTime').click()"/>
+					<span>-</span>
+					<@f.input id="endTime" name="endTime" type="date" selectData="0#1#2#3#4#5#6#7#8#9#10" selectDataClick="startTime#endTime"/>
+				</li>
+				<li>
+					<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;${i18n("查询")}</a>
+					<a class="btn btn-warning btn-rounded btn-sm" onclick="opt.form.reset()"><i class="fa fa-refresh"></i>&nbsp;${i18n("重置")}</a>
+					<a class="btn btn-default btn-rounded btn-sm" data-toggle="formMore"><i class="fa fa-angle-double-down"></i>&nbsp;${i18n("更多")}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="select-list-more">
+			<ul>
+				<li>
+					<label>${i18n("登录地址")}：</label><input type="text" class="form-control" name="ipaddr"/>
+				</li>
+				<li>
+					<label>${i18n("登录状态")}：</label>
+					<#--<select name="status" class="form-control">
+						<option value="">所有</option>
+						<#list dict.getType('sys_login_status')>
+							<#items as d>
+								<#if d.status =='0' >
+									<option value="${d.dictValue}" text="${d.dictLabel}">${d.dictLabel}</option>
+								</#if>
+							</#items>
+						</#list>
+					</select>-->
+					<@f.select dictType="sys_login_status" name="status" blankValue="" blankLabel="所有"/>
+				</li>
+			</ul>
+		</div>
+		</@f.form>
+		</div>
+		<@table id="bootstrap-table">
+			<@shiro.hasPermission name="sys:logininfo:del">
+				<a class="btn btn-danger multiple disabled" onclick="opt.operate.delAll()">
+					<i class="fa fa-remove"></i> ${i18n("删除")}
+				</a>
+			</@shiro.hasPermission>
+			<@shiro.hasPermission name="sys:logininfo:clean">
+				<a class="btn btn-danger" onclick="opt.operate.clean()">
+					<i class="fa fa-trash"></i> ${i18n("清空")}
+				</a>
+			</@shiro.hasPermission>
+		</@table>
+	</div>
+</div>
+<@footer>
+<script>
+	<#--var datas = ${dict.getDictListJson('sys_common_status')};-->
+	var prefix = baseURL + "sys/logininfo";
+	$(function() {
+		var options = {
+			url: prefix + "/list",
+			cleanUrl: prefix + "/clean",
+			delUrl: prefix + "/del",
+			sortName: "loginTime",
+			uniqueId: "id", /* 唯一ID */
+			sortOrder: "desc",
+			modalName: "${i18n("登录日志")}",
+			height: function(){ return $(window).height() - 114},
+			escape: true,
+			columns: [
+				{
+                    title: "${i18n("序号")}", width: 10, formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+				{field: 'username', title: '${i18n("登录名称")}', sortable: true},
+				{field: 'ipaddr', title: '${i18n("登录地址")}'},
+				{field: 'loginLocation', title: '${i18n("登录地点")}',formatter: function (value, row, index) {
+						return opt.common.tooltip(value,10);}},
+				{field: 'compName', title: "${i18n("归属公司")}",formatter: function (value, row, index) {
+						return opt.common.tooltip(value,5);}
+				},
+				{field: 'browser', title: '${i18n("浏览器")}'},
+				{field: 'os', title: '${i18n("操作系统")}'},
+				{field: 'status', title: '${i18n("登录状态")}', align: 'center', formatter: function(value, row, index) {
+						if(value == '00000'){
+							return '<span class="label label-primary">${i18n("成功")}</span>';
+						}else{
+							return '<span class="label label-danger">'+value+'</span>';
+						}
+					}
+				},
+				{field: 'msg', title: '${i18n("操作信息")}', formatter: function (value, row, index) {
+						return $.i18n.prop(value);
+					}
+				},
+				{field: 'loginTime', title: '${i18n("登录时间")}', sortable: true}
+			]
+		};
+		$.table.init(options);
+	});
+
+	function treeCallback(id, event, index, layero, nodes) {
+		if(id == "deptId"){
+			if(event == "ok"){
+				/* 点击确认按钮直接刷新表格*/
+				$.table.search();
+			}
+		}
+	}
+	function unlock() {
+		opt.operate.post(prefix + "/unlock?loginName=" + $.table.selectColumns("loginName"));
+	}
+</script>
+</@footer>
+</@pageTheme>
+

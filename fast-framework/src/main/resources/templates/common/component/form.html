@@ -1,0 +1,50 @@
+<#--
+  Copyright (c) 2020-Now http://www.j2eefast.com All rights reserved.
+  常用表单组件
+  @author J2eeFAST
+  @date 2020-05-20
+  @version v1.0.1
+  //修改ID适配页面传值特殊符号问题
+-->
+<#-- 国际化-->
+<#function i18n text args=[]>
+    <#assign tt="${springMacroRequestContext.getMessage(text,args,text)}">
+    <#return tt>
+</#function>
+<#--获取动态传入参数值 -->
+<#macro getName value key>
+    <#list value?keys as attr>
+        <#if attr == key>
+            <#t>${value[attr]}<#t>
+        </#if>
+    </#list>
+</#macro>
+<#setting url_escaping_charset='utf-8'>
+<#--
+    // from表单
+-->
+<#macro form name ="" <#-- 表单的名称-->
+            id = ""
+            action = "" <#-- 当提交表单时向何处发送表单数据-->
+            method	= "" <#-- 用于发送 form-data 的 HTTP 方法-->
+            enctype = "" <#-- 发送表单数据之前如何对其进行编码-->
+            class = "" <#-- css 样式-->
+            style = "" <#-- 表单from style 样式-->
+>
+    <form id="<#if id=="">${name}<#else>${id}</#if>" name="<#if id == "">${name}<#else>${id}</#if>" <#if style!=""> style ="${style}"</#if> <#if class!=""> class ="${class}"</#if>  <#if action !=""> action = ${action}</#if> <#if method !=""> action = ${method}</#if> <#if enctype !=""> action = ${enctype}</#if>>
+    <#nested>
+    </form>
+</#macro>
+<#include "input.html"/>
+<#include "iconselect.html"/>
+<#include "tableselect.html"/>
+<#include "treeselect.html"/>
+<#include "select.html"/>
+<#include "ueditor.html"/>
+<#include "checkbox.html"/>
+<#include "fileupload.html"/>
+<#include "wizard.html"/>
+<#include "ueditor.html"/>
+<#include "imageclip.html"/>
+<#include "comment.html"/>
+<#include "selectLinkage.html"/>

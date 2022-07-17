@@ -1,0 +1,7 @@
+chcp 65001
+
+set JAVA_OPTS=-Xms1024m -Xmx1024m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError
+
+echo "运行版本V{$VERSION&}"
+
+java -Dfile.encoding=utf-8 -jar {$APP_NAME&} &

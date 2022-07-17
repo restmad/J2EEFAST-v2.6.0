@@ -1,0 +1,205 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="用户管理" bodyClass="white-bg" libs=["bootstrapSelect"]/>
+ <div class="wrapper wrapper-content ibox-content">
+    <@f.form id="form-user-add" class="form-horizontal">
+    <h4 class="form-header h4">${i18n("基本信息")}</h4>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("登录账号")}：</label>
+                <div class="col-sm-8">
+                    <@f.input name="username" placeholder="请输入登录账号" autocomplete="off" required=true helpTip="登录账号数字加字母组合,至少3位"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("归属公司")}：</label>
+                <div class="col-sm-8">
+                    <@f.treeselect name="compId" boxTitle="选择归属公司" url="sys/comp/treeData?type=0" expandLevel=true required=true
+                    placeholder="请选择归属公司"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("用户姓名")}：</label>
+                <div class="col-sm-8">
+                    <@f.input name="name" placeholder="请输入用户姓名" maxlength="30" required=true/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("归属部门")}：</label>
+                <div class="col-sm-8">
+                    <@f.treeselect  name="deptId" boxTitle="请选择归属部门" url="sys/dept/selectZtree" required=true
+                    correlationId="compId" isSelectParent=true  placeholder="请选择归属部门"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("登录密码")}：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                       <@f.input name="password" placeholder="请输入登录密码" autocomplete="off" required=true type="password" value="${config.getKey('SYS_USER_INITPASSWORD')}"/>
+                       <span class="input-group-addon" title="${i18n("登录密码,鼠标按下显示密码")}"
+                              data-toggle="tooltip"
+                              data-placement="bottom" data-custom-class="tooltip-warning"
+                    onmousedown="$('#password').attr('type','text')"
+                    onmouseup="$('#password').attr('type','password')"><i class="fa fa-fw fa-key"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("所属角色")}：</label>
+                <div class="col-sm-8">
+                    <@f.select name="roleIdList" multiple = true  items=roles itemLabel="roleName" itemValue="id" required=true/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("手机号码")}：</label>
+                <div class="col-sm-8">
+                        <@f.input name="mobile"  maxlength="11" butClass="fa fa-fw fa-mobile"  placeholder="请输入手机号码" required=true/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label"><span style="color: red; ">*</span>${i18n("所属岗位")}：</label>
+                <div class="col-sm-8">
+                    <@f.select name="postCodes" multiple = true  items=posts itemLabel="postName" itemValue="postCode" required=true/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">${i18n("邮箱")}：</label>
+                <div class="col-sm-8">
+                    <@f.input name="email" class="form-control email" butClass="fa fa-fw fa-envelope" maxlength="50" placeholder="请输入邮箱" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">${i18n("用户状态")}：</label>
+                <div class="col-sm-8">
+                    <@f.switch name="status" value="0"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    </@f.form>
+    <div class="hr-line-dashed"></div>
+    <div class="row" id="_addTab">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="opt.form.submit()"><i class="fa fa-check"></i>${i18n("保存")}</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="opt.modal.closeTab()"><i class="fa fa-reply-all"></i>${i18n("关闭")}</button>
+        </div>
+    </div>
+</div>
+<@footer>
+<script type="text/javascript">
+    var prefix = baseURL + "sys/user";
+
+    /**
+     * 表单前端校验
+     **/
+    $("#form-user-add").validate({
+        onkeyup: false,
+        rules:{
+            username:{
+                minlength: 3,
+                maxlength: 10,
+                isUserName: opt.common.trim($("#username").val()),
+                remote: {
+                    url: prefix + "/checkUserNameUnique",
+                    type: "POST",
+                    dataType: "html",
+                    data: {
+                        "username": function() {
+                            return opt.common.trim($("#username").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return opt.validate.unique(data);
+                    }
+                }
+            },
+            password:{
+                minlength: 5,
+                maxlength: 20
+            },
+            _role:{
+                minlength: 1
+            },
+            _posts:{
+                minlength: 1
+            },
+            mobile:{
+                isMobile: opt.common.trim($("#mobile").val()),
+                remote: {
+                    url: prefix + "/checkMobileUnique",
+                    type: "POST",
+                    dataType: "html",
+                    data: {
+                        "mobile": function() {
+                            return opt.common.trim($("#mobile").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return opt.validate.unique(data);
+                    }
+                }
+            }
+        },
+        messages: {
+            "username": {
+                remote:"${i18n("sys.msg.user.already")}"
+            },
+            "mobile":{
+                remote:"${i18n("sys.msg.mobile.already")}"
+            }
+        },
+        focusCleanup: true
+    });
+
+    /**
+     * Tab 页面点击确认按钮执行事件
+     **/
+    function submitHandler() {
+        if (opt.validate.form()) {
+            opt.operate.saveTab(prefix + "/add", $('#form-user-add').serialize());
+        }
+    }
+
+    /**
+     * select 回调事件
+     * @param id 那个select控件发出的事件
+     * @param event change 当控件改变时
+     * @param data 选中数据对象
+     */
+    function selectCallback(id, event, data){
+        if(id === "roleIdList"){
+            console.log("roleIdList:" + data);
+        }else if(id === "postCodes"){
+            console.log("postCodes:" + data);
+        }
+    }
+</script>
+</@footer>
+</@pageTheme>

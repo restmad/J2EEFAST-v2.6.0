@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j2eefast.web.test.mapper.ExampleTestMapper">
+
+    <!--  实体栏位  --> 
+    <sql id="exampleTestColumns">
+         a.id AS "id" ,
+         a.code AS "code" ,
+         a.name AS "name" ,
+         a.email AS "email" ,
+         a.avatar AS "avatar" ,
+         a.phone AS "phone" ,
+         a.sex AS "sex" ,
+         a.age AS "age" ,
+         a.join_date AS "joinDate" ,
+         a.leave_date AS "leaveDate" ,
+         comp001.name AS "company.name",
+         a.comp_id AS "compId" ,
+         dept001.name AS "organization.name",
+         a.dept_id AS "deptId" ,
+         a.addr AS "addr" ,
+         a.addrinfo AS "addrinfo" ,
+         a.del_flag AS "delFlag" ,
+         a.create_by AS "createBy" ,
+         a.remark AS "remark" ,
+         a.update_time AS "updateTime" ,
+         a.update_by AS "updateBy" ,
+         a.create_time AS "createTime" ,
+         a.t_man_dd AS "tManDd" 
+    </sql>
+
+    <!-- 外联表  -->
+    <sql id="exampleTestJoins">
+        LEFT JOIN sys_comp comp001 ON comp001.id = a.comp_id
+        LEFT JOIN sys_comp dept001 ON (dept001.type = '1' AND dept001.id = a.dept_id )
+    </sql>
+
+    <!--  根据主键获取实体   -->
+    <select id="findExampleTestById"  resultType="com.j2eefast.web.test.entity.ExampleTestEntity" >
+        SELECT
+        <include refid="exampleTestColumns"/>
+		FROM  example_test a
+        <include refid="exampleTestJoins"/>
+		WHERE a.id = #{id}
+    </select>
+
+    <!--  根据获取实体List   -->
+    <select id="findList" resultType="com.j2eefast.web.test.entity.ExampleTestEntity">
+        SELECT
+        <include refid="exampleTestColumns"/>
+        FROM example_test a
+        <include refid="exampleTestJoins"/>
+		<where>
+            a.del_flag = '0'
+            <if test="code != null  and code != ''"> AND a.code = #{code} </if>
+            <if test="name != null  and name != ''">
+                AND a.name LIKE
+                CONCAT('%',#{name},'%')
+            </if>
+            <if test="email != null  and email != ''"> AND a.email = #{email} </if>
+            <if test="phone != null  and phone != ''"> AND a.phone = #{phone} </if>
+            <if test="age != null "> AND a.age = #{age} </if>
+            <if test="joinDate != null "> AND a.join_date = #{joinDate} </if>
+            <if test="leaveDate != null "> AND a.leave_date = #{leaveDate} </if>
+            <if test="deptId != null "> AND a.dept_id = #{deptId} </if>
+        </where>
+    </select>
+
+    <!-- 根据获取实体 page -->
+    <select id="findPage" resultType="com.j2eefast.web.test.entity.ExampleTestEntity">
+        SELECT
+        <include refid="exampleTestColumns"/>
+        FROM example_test a
+        <include refid="exampleTestJoins"/>
+        <where>
+            a.del_flag = '0'
+            <if test="exampleTest.code != null  and exampleTest.code != ''"> AND a.code = #{exampleTest.code} </if>
+            <if test="exampleTest.name != null  and exampleTest.name != ''">
+                AND a.name LIKE
+                CONCAT('%',#{exampleTest.name},'%')
+            </if>
+            <if test="exampleTest.email != null  and exampleTest.email != ''"> AND a.email = #{exampleTest.email} </if>
+            <if test="exampleTest.phone != null  and exampleTest.phone != ''"> AND a.phone = #{exampleTest.phone} </if>
+            <if test="exampleTest.age != null "> AND a.age = #{exampleTest.age} </if>
+            <if test="exampleTest.joinDate != null "> AND a.join_date = #{exampleTest.joinDate} </if>
+            <if test="exampleTest.leaveDate != null "> AND a.leave_date = #{exampleTest.leaveDate} </if>
+            <if test="exampleTest.deptId != null "> AND a.dept_id = #{exampleTest.deptId} </if>
+            <if test = "sql_filter !=null and sql_filter!=''">
+                AND ${sql_filter}
+            </if>
+        </where>
+    </select>
+
+</mapper>

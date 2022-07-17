@@ -1,0 +1,192 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="角色修改" bodyClass="white-bg" libs=["zTree"]/>
+<div class="wrapper wrapper-content ibox-content">
+<@f.form id="form-role-edit" class="form-horizontal">
+    <@f.hidden id="id" name="id" value="${role.id?default('')}"/>
+    <div class="form-group">
+        <label class="col-sm-3 control-label "><span style="color: red; ">*</span>${i18n("角色名称")}：</label>
+        <div class="col-sm-8">
+            <@f.input name="roleName" value="${role.roleName?default('')}" required=true/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("权限字符")}：</label>
+        <div class="col-sm-8">
+            <@f.input name="roleKey" value="${role.roleKey?default('')}" required=true/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">${i18n("管理模块")}：</label>
+        <div class="col-sm-8">
+            <@f.checkbox name="moduleCodes" value="${selectModules}" items=modules itemLabel="moduleName" itemValue="moduleCode" required=true/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("显示排序")}：</label>
+        <div class="col-sm-8">
+            <@f.input name="roleSort" value="${role.roleSort?default('')}"  required=true/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("状态")}：</label>
+        <div class="col-sm-8">
+            <@f.switch name="status" value="${role.status}"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">${i18n("备注")}：</label>
+        <div class="col-sm-8">
+            <@f.textarea name="remark" value="${role.remark?default('')}"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">${i18n("菜单权限")}: </label>
+        <div  class="col-sm-8">
+            <div class="box box-solid" style="background:#FAFAFA;border-top: 1px solid rgb(210, 214, 222);">
+                <div class="box-header">
+                    <div class="box-title">
+                        <label class="check-box">
+                            <input type="checkbox" id="checkall"/> ${i18n("全部勾选")}
+                        </label>
+                    </div>
+                    <div class="box-tools pull-right" style="top:8px;">
+                        <a class="btn btn-box-tool" id="expand"
+                           value="dataScopeTree" >${i18n("展开")}</a>/
+                        <a class="btn btn-box-tool" id="collapse" value="dataScopeTree" >${i18n("折叠")}</a>
+                    </div>
+                </div>
+                <div class="box-body">
+                        <div id="menuTrees" class="ztree"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</@f.form>
+</div>
+<@footer>
+<script type="text/javascript">
+    $(function() {
+        var txt = opt.common.getCheckboxValue("moduleCodes");
+        var url = baseURL + "sys/menu/roleModuleMenuTreeData?id=" + $("#id").val() + "&moduleCodes=" + txt;
+        var options = {
+            id: "menuTrees",
+            url: url,
+            check: { enable: true },
+            expandLevel: 0
+        };
+        $.tree.init(options);
+
+        $('input[name="moduleCodes"]').each(function () {
+            $(this).on('ifChanged', function(event){
+                var txt = opt.common.getCheckboxValue("moduleCodes");
+                if(opt.common.isEmpty(txt)){
+                    $("#menuTrees").hide();
+                }else{
+                    $("#menuTrees").show();
+                }
+
+                var url = baseURL + "sys/menu/roleModuleMenuTreeData?moduleCodes="+txt+"&id="+$("#id").val();
+                var options = {
+                    id: "menuTrees",
+                    url: url,
+                    check: { enable: true },
+                    expandLevel: 0
+                };
+                $.tree.init(options);
+            });
+        })
+    });
+
+    $('#checkall').on('ifChecked ifUnchecked', function(){
+        if(this.checked){
+            $.tree.checkAllNodes(true);
+        }else{
+            $.tree.checkAllNodes(false);
+        }
+    })
+    /* 树展开事件 */
+    $('#expand').click(function() {
+        $.tree.expand();
+    });
+
+    /* 树折叠事件 */
+    $('#collapse').click(function() {
+        $.tree.collapse();
+    });
+
+    /*校验表单*/
+    $("#form-role-edit").validate({
+        rules:{
+            onkeyup: false,
+            roleName:{
+                remote: {
+                    url: baseURL + "sys/role/checkRoleNameUnique",
+                    type: "POST",
+                    dataType: "html",
+                    data: {
+                        "roleName" : function() {
+                            return opt.common.trim($("#roleName").val());
+                        },
+                        "id":function () {
+                            return opt.common.trim($("#id").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return opt.validate.unique(data);
+                    }
+                }
+            },
+            roleKey:{
+                remote: {
+                    url: baseURL + "sys/role/checkRoleKeyUnique",
+                    type: "POST",
+                    dataType: "html",
+                    data: {
+                        "roleKey" : function() {
+                            return opt.common.trim($("#roleKey").val());
+                        },
+                        "id":function () {
+                            return opt.common.trim($("#id").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return opt.validate.unique(data);
+                    }
+                }
+            },
+            roleSort:{
+                number: opt.common.trim($("#roleSort").val()),
+                minlength: 1,
+                maxlength: 2
+            }
+        },
+        messages: {
+            "roleName": {
+                remote: $.i18n.prop("sys.msg.role.already")
+            },
+            "roleKey": {
+                remote: $.i18n.prop("sys.msg.permission.already")
+            }
+        },
+        focusCleanup: true
+    });
+
+    /*窗口打开执行*/
+/*    function onLoadSuccess (obj) {
+
+    }*/
+
+    /*提交*/
+    function submitHandler(index, layero){
+        if (opt.validate.form()) {
+            var data = $('#form-role-edit').serializeArray();
+            var menuIds = $.tree.getCheckedNodes();
+            data.push({"name": "menuIds", "value": menuIds});
+            opt.operate.save(baseURL+'sys/role/edit',data);
+        }
+    }
+
+</script>
+</@footer>
+</@pageTheme>

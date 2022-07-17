@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysDictDataMapper">
+
+    <select id="selectDictLabel" resultType="String">
+		SELECT dict_label FROM sys_dict_data
+		WHERE dict_type = #{dictType} AND dict_value = #{dictValue}
+	</select>
+
+	<delete id="deleteDictDataByIds" parameterType="Long">
+		DELETE FROM sys_dict_data WHERE id IN
+		<foreach collection="array" item="dictCode" open="(" separator="," close=")">
+			#{dictCode}
+		</foreach>
+	</delete>
+
+</mapper>

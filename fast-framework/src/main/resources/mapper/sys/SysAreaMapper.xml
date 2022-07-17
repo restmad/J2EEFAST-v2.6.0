@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysAreaMapper">
+    
+    <!--  实体栏位  --> 
+    <sql id="sysAreaColumns">
+          a.id AS "id"   ,
+          a.parent_id AS "parentId"   ,
+          a.name AS "name"   ,
+          a.area_level AS "areaLevel"   ,
+          a.whole_name AS "wholeName"   ,
+          a.lon AS "lon"   ,
+          a.lat AS "lat"   ,
+          a.city_code AS "cityCode"   ,
+          a.zip_code AS "zipCode"   ,
+          a.area_code AS "areaCode"   ,
+          a.pin_yin AS "pinYin"   ,
+          a.simple_py AS "simplePy"   ,
+          a.per_pin_yin AS "perPinYin"
+      </sql>
+
+     <!-- 外联表  -->
+	<sql id="sysAreaJoins">
+    </sql>
+
+     <!--  根据获取实体List   -->
+     <select id="selectAreaList" resultType="com.j2eefast.framework.sys.entity.SysAreaEntity">
+		SELECT
+			<include refid="sysAreaColumns"/>
+            ,(CASE  WHEN (SELECT COUNT(1) FROM sys_area WHERE parent_id = a.id) >0 THEN 1 ELSE 0 END) AS "isTreeLeaf"
+        FROM sys_area a
+		<where>
+            <if test="name != null  and name != ''">
+                and a.name LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{name}||',%'</when>
+                    <otherwise>CONCAT('%', #{name}, '%')</otherwise>
+                </choose>
+			</if>
+            <if test="areaLevel != null "> AND a.area_level = #{areaLevel} </if>
+            <if test="parentId != null "> AND a.parent_id = #{parentId} </if>
+            <if test="zipCode != null  and zipCode != ''"> AND a.zip_code = #{zipCode} </if>
+            <if test="areaCode != null  and areaCode != ''"> AND a.area_code = #{areaCode} </if>
+        </where>
+	 </select>
+	 
+	  <!--  根据获取实体 page   -->
+     <select id="findPage" resultType="com.j2eefast.framework.sys.entity.SysAreaEntity">
+		SELECT
+		<include refid="sysAreaColumns"/>
+        ,(CASE  WHEN (SELECT COUNT(1) FROM sys_area WHERE parent_id = a.id) >0 THEN 1 ELSE 0 END) AS "isTreeLeaf"
+		FROM sys_area a
+		<include refid="sysAreaJoins"/>
+        <where>
+            <if test="sysArea.name != null  and sysArea.name != ''">
+                AND a.name LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{sysArea.name}||',%'</when>
+                    <otherwise>CONCAT('%', #{sysArea.name}, '%')</otherwise>
+                </choose>
+            </if>
+            <if test="sysArea.areaLevel != null "> AND a.area_level = #{sysArea.areaLevel} </if>
+            <if test="sysArea.parentId != null "> AND a.parent_id = #{sysArea.parentId} </if>
+            <if test="sysArea.zipCode != null  and sysArea.zipCode != ''"> AND a.zip_code = #{sysArea.zipCode} </if>
+            <if test="sysArea.areaCode != null  and sysArea.areaCode != ''"> AND a.area_code = #{sysArea.areaCode} </if>
+        </where>
+	 </select>
+	   
+</mapper>

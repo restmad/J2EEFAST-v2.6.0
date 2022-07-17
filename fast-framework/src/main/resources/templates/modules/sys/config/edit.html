@@ -1,0 +1,81 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="参数管理" bodyClass="white-bg"/>
+<div class="wrapper wrapper-content ibox-content">
+	<@f.form id="form-config-edit" class="form-horizontal">
+	   <@f.hidden  name="id"  value="${cfg.id}"/>
+       <div class="form-group">
+           <label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("参数名称")}：</label>
+           <div class="col-sm-8">
+			   <@f.input name="paramName" required=true value="${cfg.paramName?default('')}"/>
+           </div>
+       </div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("参数键名")}：</label>
+			<div class="col-sm-8">
+				<@f.input name="paramKey" required=true value="${cfg.paramKey?default('')}" helpTip="${i18n('统一规范:请务必使用大写字母下划线定义.页面获取,如:{0}{1}{2}',['${','config.getKey(\"SYS_KEY\")','}'])}"/>
+			</div>
+		</div>
+	    <div class="form-group">
+		   <label class="col-sm-3 control-label"><span style="color: red; ">*</span>${i18n("参数键值")}：</label>
+		   <div class="col-sm-8">
+			   <@f.textarea name="paramValue" rows="10" value="${cfg.paramValue?default('')}"  required=true/>
+		   </div>
+	    </div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label"><span style="color: red; ">(${i18n("请慎重修改")}*)</span>${i18n("系统内置")}：</label>
+			<div class="col-sm-8">
+				<@f.radio name="configType" dictType="sys_yes_no" value="${cfg.configType}"/>
+			</div>
+		</div>
+		   <div class="form-group">
+			   <label class="col-sm-3 control-label">${i18n("备注")}：</label>
+			   <div class="col-sm-8">
+				   <@f.textarea name="remark" value="${cfg.remark?default('')}"/>
+			   </div>
+		   </div>
+	</@f.form>
+</div>
+<@footer>
+<script>
+
+	var prefix = baseURL + "sys/config";
+	
+	$("#form-config-edit").validate({
+		onkeyup: false,
+	    rules: {
+	           paramKey: {
+	            remote: {
+	                url: prefix + "/checkConfigKeyUnique",
+	                type: "POST",
+	                dataType: "html",
+	                data: {
+	                    "id": function() {
+	                    	return $("#id").val();
+	                    },
+	                    "paramKey": function() {
+	                    	return opt.common.trim($("#paramKey").val());
+	                    }
+	                },
+	                dataFilter: function(data, type) {
+	                    return opt.validate.unique(data);
+	                }
+	            }
+	        },
+	    },
+	    messages: {
+	        "paramKey": {
+	            remote: "${i18n("已经存在")}"
+	        }
+	    },
+	    focusCleanup: true
+	});
+	
+	function submitHandler() {
+	    if (opt.validate.form()) {
+	    	opt.operate.save(prefix + "/edit", $('#form-config-edit').serialize());
+	    }
+	}
+</script>
+</@footer>
+</@pageTheme>

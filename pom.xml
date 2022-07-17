@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Maven模块版本 -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 整个系统的名称 -->
+    <groupId>com.j2eefast</groupId>
+    <artifactId>fast</artifactId>
+    <version>2.6.0</version>
+
+    <!-- 打包类型 -->
+    <packaging>pom</packaging>
+
+    <name>J2eeFAST</name>
+    <url>http://www.j2eefast.com</url>
+    <description>J2eeFast</description>
+
+    <!-- Inherit defaults from Spring Boot -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.13</version>
+    </parent>
+
+    <!-- 用户可以在maven中定义一些属性，然后在其他地方用${xxx}进行引用 -->
+    <properties>
+        <fast.version>2.6.0</fast.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <shiro.version>1.9.0</shiro.version>
+        <druid.version>1.2.9</druid.version>
+        <mybatisplus.spring.boot.version>3.4.3.4</mybatisplus.spring.boot.version>
+        <commons.fileupload.version>1.4</commons.fileupload.version>
+        <commons.io.version>2.11.0</commons.io.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <oshi.version>6.1.6</oshi.version>
+        <swagger.version>3.0.0</swagger.version>
+        <qiniu.version>[7.2.0, 7.2.99]</qiniu.version>
+        <aliyun.oss.version>3.10.2</aliyun.oss.version>
+        <qcloud.cos.version>4.4</qcloud.cos.version>
+        <commons-logging.version>1.2</commons-logging.version>
+        <!-- 验证码-->
+        <easy.captcha>1.6.2</easy.captcha>
+        <velocity.version>1.7</velocity.version>
+        <hutool.version>5.7.6</hutool.version>
+        <oracle.version>11.2.0.3</oracle.version>
+        <oauth.version>1.15.6</oauth.version>
+        <bcprov.version>1.46</bcprov.version>
+        <mysql.version>8.0.11</mysql.version>
+    </properties>
+
+    <!-- 依赖声明 -->
+    <dependencyManagement>
+        <!--项目引入插件所需要的额外依赖-->
+        <dependencies>
+
+            <dependency>
+                <groupId>me.zhyd.oauth</groupId>
+                <artifactId>JustAuth</artifactId>
+                <version>${oauth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15</artifactId>
+                <version>${bcprov.version}</version>
+            </dependency>
+
+            <!-- Java图形验证码-->
+            <dependency>
+                <groupId>com.github.whvcse</groupId>
+                <artifactId>easy-captcha</artifactId>
+                <version>${easy.captcha}</version>
+            </dependency>
+
+			<dependency>
+			  <groupId>p6spy</groupId>
+			  <artifactId>p6spy</artifactId>
+			  <version>3.8.1</version>
+			</dependency>
+
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${oracle.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+               <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatisplus.spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-fileupload</groupId>
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons.fileupload.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-core</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+
+            <!--Mysql数据库-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.swagger</groupId>
+                        <artifactId>swagger-models</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-swagger-ui</artifactId>-->
+<!--                <version>${swagger.version}</version>-->
+<!--            </dependency>-->
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>1.9.0</version>
+            </dependency>
+
+			<dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.qiniu</groupId>
+                <artifactId>qiniu-java-sdk</artifactId>
+                <version>${qiniu.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun.oss.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.qcloud</groupId>
+                <artifactId>cos_api</artifactId>
+                <version>${qcloud.cos.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- 跨平台的系统及硬件信息库 -->
+            <dependency>
+                <groupId>com.github.oshi</groupId>
+                <artifactId>oshi-core</artifactId>
+                <version>${oshi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.8.1</version>
+            </dependency>
+
+            <!-- servlet包 -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.mingsoft</groupId>
+                <artifactId>shiro-freemarker-tags</artifactId>
+                <version>0.1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- lisence验证 -->
+            <!-- https://mvnrepository.com/artifact/de.schlichtherle.truelicense/truelicense-core -->
+            <dependency>
+                <groupId>de.schlichtherle.truelicense</groupId>
+                <artifactId>truelicense-core</artifactId>
+                <version>1.33</version>
+            </dependency>
+
+            <!--velocity代码生成使用模板 -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.j2eefast</groupId>
+                <artifactId>fast-framework</artifactId>
+                <version>${fast.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.j2eefast</groupId>
+                <artifactId>fast-generator</artifactId>
+                <version>${fast.version}</version>
+            </dependency>
+
+			<dependency>
+                <groupId>com.j2eefast</groupId>
+                <artifactId>fast-web</artifactId>
+                <version>${fast.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.j2eefast</groupId>
+                <artifactId>fast-flowable</artifactId>
+                <version>${fast.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.j2eefast</groupId>
+                <artifactId>fast-common</artifactId>
+                <version>${fast.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <!-- 项目来整合各子模块 -->
+    <modules>
+    	<module>fast-admin</module><!-- 后台入口模块 -->
+        <module>fast-web</module> <!--二次开发  -->
+        <module>fast-framework</module><!-- 核心框架 -->
+        <module>fast-generator</module><!-- 代码生成器模块 -->
+        <module>fast-common</module><!-- 公共模块 -->
+        <module>fast-flowable</module>
+        <module>fast-ureport2</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+                <!--  <groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<classifier>exec</classifier>
+				</configuration>-->
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- 阿里云maven仓库 -->
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>aliyun nexus</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

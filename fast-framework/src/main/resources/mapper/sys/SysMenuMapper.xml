@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysMenuMapper">
+
+    <sql id="selectMenuVo">
+        SELECT id, name, parent_id, order_num, url,  type, hide, is_new,component,status,
+        <if test="_databaseId  == 'oracle'">NVL(perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql'">IFNULL(perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(perms,'') AS perms,</if>
+        target, icon,module_codes, create_by, create_time
+		FROM sys_menu
+    </sql>
+
+    <sql id="selectMenuVo1_Mysql">
+		SELECT DISTINCT m.id, m.parent_id, m.name, m.url, m.hide, m.is_new, IFNULL(m.perms,'') AS perms,m.module_codes,m.target, m.type,m.component,m.status, m.icon, m.order_num, m.create_time FROM(SELECT
+		a.*,SUBSTRING_INDEX( SUBSTRING_INDEX( a.module_codes, ',', b.help_topic_id + 1 ), ',',- 1 ) AS cs
+		FROM
+		sys_menu a
+		JOIN sys_index b ON b.help_topic_id <![CDATA[ < ]]> ( LENGTH( a.module_codes ) - LENGTH( REPLACE ( a.module_codes, ',', '' ) ) + 1)) AS m
+    </sql>
+
+    <sql id="selectMenuVo1_Orcale">
+        SELECT m.id, m.parent_id,
+        m.name, m.url, m.hide, m.is_new, NVL(m.perms,'') AS perms,m.module_codes,m.target, m.type,m.component,m.status, m.icon, m.order_num, m.create_time FROM
+        (SELECT REGEXP_SUBSTR(TO_CHAR(t.module_codes), '[^,]+', 1, LEVEL) AS cs,t.*
+        FROM sys_menu t CONNECT BY LEVEL   <![CDATA[ <=  ]]> regexp_count(TO_CHAR(t.module_codes), ',') + 1 ) m
+    </sql>
+
+    <sql id="selectMenuVo1_Postgresql">
+        SELECT m.id, m.parent_id,
+        m.name, m.url, m.is_new, m.hide, COALESCE(m.perms,'') AS perms,m.module_codes,m.target,m.component,m.status, m.type, m.icon, m.order_num, m.create_time FROM
+        (SELECT UNNEST(STRING_TO_ARRAY(t.module_codes,',')) AS cs,t.*
+        FROM sys_menu t ) m
+    </sql>
+
+    <sql id="selectMenuVo1_SqlServer">
+        SELECT m.id, m.parent_id,
+        m.name, m.url, m.is_new, m.hide, ISNULL(m.perms,'') AS perms,m.module_codes,m.target,m.component,m.status, m.type, m.icon, m.order_num, m.create_time FROM
+        (SELECT v.value AS cs,t.*
+        FROM sys_menu t CROSS APPLY STRING_SPLIT(t.module_codes, ',')v) m
+    </sql>
+
+    <select id="selectMenuByMenId" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        SELECT m.id AS id, m.name AS name, m.parent_id AS parentId,
+        m.order_num AS orderNum, m.url AS url,  m.type AS type, m.hide AS hide,m.component,m.status,
+        m.target AS target,m.module_codes AS moduleCodes, m.is_new AS isNew,
+        m.icon AS icon,
+        <if test="_databaseId  == 'oracle'">NVL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql' ">IFNULL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(m.perms,'') AS perms,</if>
+        rm.name AS parentName
+        FROM sys_menu m
+        LEFT JOIN (SELECT id,name FROM sys_menu) rm ON m.parent_id = rm.id
+        WHERE m.id = #{menuId}
+    </select>
+
+    <select id="findNotButtonList" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <include refid="selectMenuVo"/>
+		WHERE type != 2 ORDER BY order_num ASC
+	</select>
+
+    <select id="findListParentId" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <include refid="selectMenuVo"/>
+		WHERE parent_id = #{parentId} AND sys_menu.hide = 0 ORDER BY order_num ASC
+	</select>
+
+    <select id="findModuleMenuAll"  parameterType="String"  resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <if test="_databaseId  == 'oracle'">
+            <include refid="selectMenuVo1_Orcale"/>
+        </if>
+        <if test="_databaseId  == 'mysql'">
+            <include refid="selectMenuVo1_Mysql"/>
+        </if>
+        <if test="_databaseId  == 'postgresql'">
+            <include refid="selectMenuVo1_Postgresql"/>
+        </if>
+        <if test="_databaseId  == 'sqlserver'">
+            <include refid="selectMenuVo1_SqlServer"/>
+        </if>
+        <if test="moduleCodes != null and moduleCodes != ''">
+            WHERE m.cs IN
+            <foreach item="code" collection="moduleCodes.split(',')" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+    <select id="findListmoduleParentId" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <if test="_databaseId  == 'oracle'">
+            <include refid="selectMenuVo1_Orcale"/>
+        </if>
+        <if test="_databaseId  == 'mysql'">
+            <include refid="selectMenuVo1_Mysql"/>
+        </if>
+        <if test="_databaseId  == 'postgresql'">
+            <include refid="selectMenuVo1_Postgresql"/>
+        </if>
+        <if test="_databaseId  == 'sqlserver'">
+            <include refid="selectMenuVo1_SqlServer"/>
+        </if>
+        WHERE m.parent_id = #{parentId} AND m.hide = 0
+        AND m.cs = #{modules}
+        ORDER BY m.order_num ASC
+    </select>
+
+    <select id="findMenuAllByUserIdModelId" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <if test="_databaseId  == 'oracle'">
+            <include refid="selectMenuVo1_Orcale"/>
+        </if>
+        <if test="_databaseId  == 'mysql'">
+            <include refid="selectMenuVo1_Mysql"/>
+        </if>
+        <if test="_databaseId  == 'postgresql'">
+            <include refid="selectMenuVo1_Postgresql"/>
+        </if>
+        <if test="_databaseId  == 'sqlserver'">
+            <include refid="selectMenuVo1_SqlServer"/>
+        </if>
+        LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        LEFT JOIN sys_role ro ON ur.role_id = ro.id
+        WHERE
+        ur.user_id = #{userId}
+        <if test="moduleCodes != null and moduleCodes != ''">
+            AND m.cs IN
+            <foreach item="code" collection="moduleCodes.split(',')" open="(" separator="," close=")">
+                #{code}
+            </foreach>
+        </if>
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+	<select id="findPermsByRoleId" resultType="string">
+        SELECT perms FROM
+        sys_role_menu rel
+        INNER JOIN sys_menu m ON rel.menu_id = m.id
+        WHERE perms IS NOT NULL AND perms != '' AND rel.role_id = #{roleId}
+    </select>
+
+    <select id="findMenuTree" parameterType="Long" resultType="String">
+		SELECT concat(m.id,
+        <if test="_databaseId  == 'oracle'"> NVL(m.perms,'') </if>
+        <if test="_databaseId  == 'mysql'">IFNULL(m.perms,'') </if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(m.perms,'') </if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(m.perms,'') </if>
+		) AS perms
+		FROM sys_menu m
+		LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+		WHERE rm.role_id = #{roleId}
+		ORDER BY m.parent_id, m.order_num
+	</select>
+
+    <!-- 分页查询-->
+    <select id="findPage" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        SELECT a.id, a.name, a.parent_id, a.order_num, a.url,  a.type, a.hide, a.is_new,
+        <if test="_databaseId  == 'oracle'">NVL(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql'">IFNULL(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(a.perms,'') AS perms,</if>
+        a.target, a.icon,a.module_codes, a.create_by, a.create_time
+        ,(CASE  WHEN (SELECT COUNT(1) FROM sys_menu WHERE parent_id = a.id) >0 THEN 1 ELSE 0 END) AS "isTreeLeaf"
+        FROM sys_menu a
+        <where>
+            <if test="menu.name != null  and menu.name != ''">
+                AND a.name LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{menu.name}||',%'</when>
+                    <otherwise>CONCAT('%', #{menu.name}, '%')</otherwise>
+                </choose>
+            </if>
+            <if test="menu.hide != null "> AND a.hide = #{menu.hide} </if>
+            <if test="menu.type != null "> AND a.type = #{menu.type} </if>
+            <if test="menu.parentId != null "> AND a.parent_id = #{menu.parentId} </if>
+        </where>
+    </select>
+
+    <select id="findMenuList" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        SELECT a.id, a.name, a.parent_id, a.order_num, a.url,  a.type, a.hide, a.is_new,
+        <if test="_databaseId  == 'oracle'">NVL(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql'">IFNULL(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(a.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(a.perms,'') AS perms,</if>
+        a.target, a.icon,a.module_codes, a.create_by, a.create_time
+        ,(CASE  WHEN (SELECT COUNT(1) FROM sys_menu WHERE parent_id = a.id) >0 THEN 1 ELSE 0 END) AS "isTreeLeaf"
+        FROM sys_menu a
+        <where>
+            <if test="name != null and name != ''">
+                AND a.name LIKE
+                <choose>
+                    <when test="_databaseId == 'oracle'">'%,'||#{name}||',%'</when>
+                    <otherwise>CONCAT('%', #{name}, '%')</otherwise>
+                </choose>
+            </if>
+            <if test="hide != null">
+                AND a.hide = #{hide}
+            </if>
+            <if test="type != null "> AND a.type = #{type} </if>
+            <if test="parentId != null "> AND a.parent_id = #{parentId} </if>
+        </where>
+        ORDER BY a.order_num DESC
+    </select>
+
+    <select id="findMenuListByUserId" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        SELECT DISTINCT m.id, m.parent_id, m.name, m.url, m.hide, m.is_new,
+        <if test="_databaseId  == 'oracle'">NVL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql'">IFNULL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(m.perms,'') AS perms,</if>
+        m.target,m.type, m.icon, m.order_num, m.create_time
+        FROM sys_menu m
+        LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        LEFT JOIN sys_role ro ON ur.role_id = ro.id
+        WHERE ur.user_id = #{userId}
+        <if test="name != null and name != ''">
+            AND m.name LIKE
+            <choose>
+                <when test="_databaseId == 'oracle'">'%,'||#{name}||',%'</when>
+                <otherwise>CONCAT('%', #{name}, '%')</otherwise>
+            </choose>
+        </if>
+        <if test="hide != null">
+            AND m.hide = #{hide}
+        </if>
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+    <select id="checkMenuNameUnique" parameterType="com.j2eefast.framework.sys.entity.SysMenuEntity" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        <include refid="selectMenuVo"/>
+        WHERE NAME=#{name} AND parent_id = #{parentId}
+    </select>
+
+    <select id="findMenuAllByUserId" parameterType="Long" resultType="com.j2eefast.framework.sys.entity.SysMenuEntity">
+        SELECT DISTINCT m.id, m.parent_id, m.name, m.url, m.hide, m.is_new,m.component,m.status,
+        <if test="_databaseId  == 'oracle'">NVL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'mysql'">IFNULL(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'postgresql'">COALESCE(m.perms,'') AS perms,</if>
+        <if test="_databaseId  == 'sqlserver'">ISNULL(m.perms,'') AS perms,</if>
+        m.module_codes,m.target, m.type, m.icon, m.order_num, m.create_time
+        FROM sys_menu m
+        LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        LEFT JOIN sys_role ro ON ur.role_id = ro.id
+        WHERE ur.user_id = #{userId}
+        ORDER BY m.parent_id, m.order_num
+    </select>
+
+</mapper>

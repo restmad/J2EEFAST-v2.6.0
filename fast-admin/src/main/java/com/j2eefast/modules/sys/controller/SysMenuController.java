@@ -1,0 +1,381 @@
+/*
+ * All content copyright http://www.j2eefast.com, unless 
+ * otherwise indicated. All rights reserved.
+ * No deletion without permission
+ */
+package com.j2eefast.modules.sys.controller;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import cn.hutool.core.util.StrUtil;
+import com.j2eefast.common.core.base.entity.LoginUserEntity;
+import com.j2eefast.common.core.base.entity.Ztree;
+import com.j2eefast.common.core.business.annotaion.BussinessLog;
+import com.j2eefast.common.core.controller.BaseController;
+import com.j2eefast.common.core.enums.BusinessType;
+import com.j2eefast.common.core.utils.PageUtil;
+import com.j2eefast.framework.annotation.RepeatSubmit;
+import com.j2eefast.framework.sys.constant.factory.ConstantFactory;
+import com.j2eefast.framework.sys.entity.RouterEntity;
+import com.j2eefast.framework.sys.entity.SysModuleEntity;
+import com.j2eefast.framework.sys.entity.SysRoleEntity;
+import com.j2eefast.framework.sys.service.SysModuleService;
+import com.j2eefast.framework.utils.UserUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import com.j2eefast.common.core.exception.RxcException;
+import com.j2eefast.common.core.utils.ResponseData;
+import com.j2eefast.framework.utils.Constant;
+import com.j2eefast.framework.sys.entity.SysMenuEntity;
+import com.j2eefast.framework.sys.service.SysMenuService;
+
+/**
+ * 系统菜单控制器
+ * @author zhouzhou
+ * @date 2020-03-07 13:44
+ */
+@Controller
+@RequestMapping("/sys/menu")
+public class SysMenuController extends BaseController {
+
+	private String urlPrefix = "modules/sys/menu";
+
+	@Autowired
+	private SysMenuService sysMenuService;
+	@Autowired
+	private SysModuleService sysModuleService;
+
+	@RequiresPermissions("sys:menu:view")
+	@GetMapping()
+	public String menu(){
+		return urlPrefix + "/menu";
+	}
+
+
+	/**
+	 * 获取用户登录菜单信息
+	 * @return
+	 */
+	@GetMapping("/getRouters")
+	@ResponseBody
+	public ResponseData getRouters(){
+		LoginUserEntity user = UserUtils.getUserInfo();
+		List<Map<String, Object>> modules = ConstantFactory.me().getModules(user.getId());
+		Map<String, List<SysMenuEntity>> menuList = new HashMap<>();
+		List<SysMenuEntity> listMenu = new ArrayList<>();
+		for(Map<String, Object> s: modules){
+			List<SysMenuEntity> menu = ConstantFactory.me().getMenuByUserIdModuleCode(user.getId(),
+					(String) s.get("moduleCode"),user);
+			// 模块菜单 添加到父
+			SysMenuEntity sysMenuEntity = new SysMenuEntity();
+			sysMenuEntity.setComponent("LAYOUT");
+			sysMenuEntity.setUrl("/"+s.get("id"));
+			sysMenuEntity.setName((String) s.get("moduleName"));
+			sysMenuEntity.setIcon((String) s.get("icon"));
+			sysMenuEntity.setHide(0);
+			sysMenuEntity.setChildren(menu);
+			sysMenuEntity.setType(0);
+			sysMenuEntity.setId((Long) s.get("id"));
+			listMenu.add(sysMenuEntity);
+		}
+		List<RouterEntity>  routerEntityList = sysMenuService.buildMenus(listMenu);
+		return success(routerEntityList);
+	}
+
+	/**
+	 * 新增
+	 * @author zhouzhou
+	 * @date 2020-03-07 14:22
+	 */
+	@GetMapping("/add/{parentId}")
+	public String add(@PathVariable("parentId") Long parentId, ModelMap mmap){
+		SysMenuEntity menu = null;
+		if (0L != parentId){
+			menu = sysMenuService.selectMenuByMenId(parentId);
+		}
+		else{
+			menu = new SysMenuEntity();
+			menu.setId(0L);
+			menu.setName("主目录");
+		}
+		mmap.put("menu", menu);
+		List<SysModuleEntity>  modules = sysModuleService.list();
+		mmap.put("modules", modules);
+		return urlPrefix + "/add";
+	}
+
+
+	/**
+	 * 修改菜单
+	 * @author zhouzhou
+	 * @date 2020-03-07 14:22
+	 */
+	@GetMapping("/edit/{menuId}")
+	public String edit(@PathVariable("menuId") Long menuId, ModelMap mmap){
+		mmap.put("menu", sysMenuService.selectMenuByMenId(menuId));
+		List<SysModuleEntity>  modules = sysModuleService.list();
+		mmap.put("modules", modules);
+		return urlPrefix + "/edit";
+	}
+
+	/**
+	 * 图标选择
+	 * @author zhouzhou
+	 * @date 2020-03-07 13:58
+	 */
+	@GetMapping("/iconSelect")
+	public String iconselect(@RequestParam(value="value", required=true)String value,ModelMap mmap) {
+		mmap.put("iconValue", value);
+		return urlPrefix + "/icon";
+	}
+
+	/**
+	 * 修改
+	 * @author zhouzhou
+	 * @date 2020-03-07 14:23
+	 */
+	@BussinessLog(title = "菜单管理", businessType = BusinessType.UPDATE)
+	@RequestMapping(value = "/edit", method = RequestMethod.POST)
+	@RequiresPermissions("sys:menu:edit")
+	@ResponseBody
+	public ResponseData edit(@Validated SysMenuEntity menu) {
+		// 数据校验
+		verifyForm(menu);
+
+		if (!sysMenuService.checkMenuNameUnique(menu)){
+			return error("新增菜单'" + menu.getName()+ "'失败，菜单名称已存在");
+		}
+		if(sysMenuService.updateById(menu)){
+			UserUtils.clearCachedAuthorizationInfo(); //清理权限缓存
+			return success();
+		}else {
+			return error("修改失败");
+		}
+	}
+
+
+	@RequestMapping(value = "/list", method = RequestMethod.POST)
+	@RequiresPermissions("sys:menu:list")
+	@ResponseBody
+	public ResponseData list(@RequestParam Map<String, Object> params, SysMenuEntity menu) {
+		PageUtil page = sysMenuService.findPage(params, menu);
+		return success(page);
+	}
+
+	/**
+	 * 异步请求数据
+	 * @param menu
+	 * @return
+	 */
+	@RequestMapping("/listChild")
+	@RequiresPermissions("sys:menu:list")
+	@ResponseBody
+	public ResponseData listChild(SysMenuEntity menu) {
+		List<SysMenuEntity> list = sysMenuService.selectList(menu);
+		return success().put("list", list);
+	}
+
+
+	/**
+	 * 加载角色菜单列表树
+	 */
+	@GetMapping("/roleMenuTreeData")
+	@ResponseBody
+	public List<Ztree> roleMenuTreeData(SysRoleEntity role){
+		List<Ztree> ztrees = sysMenuService.roleMenuTreeData(role, UserUtils.getUserInfo());
+		return ztrees;
+	}
+
+	/**
+	 * 加载角色菜单列表树
+	 * @author zhouzhou
+	 * @date 2020-03-07 14:23
+	 */
+	@GetMapping("/roleModuleMenuTreeData")
+	@ResponseBody
+	public List<Ztree> roleModuleMenuTreeData(SysRoleEntity role){
+		List<Ztree> ztrees = sysMenuService.roleModuleMenuTreeData(role, UserUtils.getUserInfo());
+		return ztrees;
+	}
+
+
+
+
+	/**
+	 * 校验菜单名称
+	 */
+	@RequestMapping(value = "/checkMenuNameUnique", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseData checkMenuNameUnique(SysMenuEntity menu){
+		return sysMenuService.checkMenuNameUnique(menu)?success():error("已经存在!");
+	}
+
+	/**
+	 * 加载所有菜单列表树
+	 */
+	@GetMapping("/menuTreeData")
+	@ResponseBody
+	public List<Ztree> menuTreeData(){
+		List<Ztree> ztrees = sysMenuService.menuTreeData(UserUtils.getUserInfo());
+		return ztrees;
+	}
+
+	/**
+	 * 加载所有菜单列表
+	 */
+	@GetMapping("/getAllmenu")
+	@ResponseBody
+	public ResponseData getAllmenu(){
+		List<SysMenuEntity> listMenu = sysMenuService.findUserMenuList(UserUtils.getUserId());
+		return success(listMenu);
+	}
+
+	/**
+	 * 管理员查看用户已获取的菜单权限
+	 */
+	@GetMapping("/menuUserTreeData")
+	@RequiresPermissions("sys:user:list")
+	@ResponseBody
+	public List<Ztree> menuUserTreeData(Long userId) {
+		List<Ztree> ztrees = new ArrayList<Ztree>();
+		if (null != userId && userId != 0) {
+			ztrees = sysMenuService.menuUserTreeData(userId);
+		}
+		return ztrees;
+	}
+
+	/**
+	 * 选择菜单树
+	 */
+	@GetMapping("/selectMenuTree/{menuId}")
+	public String selectMenuTree(@PathVariable("menuId") Long menuId, ModelMap mmap){
+		mmap.put("menu", sysMenuService.getById(menuId));
+		return urlPrefix + "/tree";
+	}
+
+
+	/**
+	 * 选择菜单(添加、修改菜单)
+	 */
+	@RequestMapping("/select")
+	@RequiresPermissions("sys:menu:select")
+	@ResponseBody
+	public ResponseData select() {
+		// 查询列表数据
+		List<SysMenuEntity> menuList = sysMenuService.findNotButtonList();
+		// 添加顶级菜单
+		SysMenuEntity root = new SysMenuEntity();
+		root.setId(0L);
+		root.setName("一级菜单");
+		root.setParentId(-1L);
+		menuList.add(root);
+		return success().put("menuList", menuList);
+	}
+
+	/**
+	 * 菜单信息
+	 */
+	@RequestMapping("/info/{menuId}")
+	@RequiresPermissions("sys:menu:info")
+	@ResponseBody
+	public ResponseData info(@PathVariable("menuId") Long menuId) {
+		SysMenuEntity menu = sysMenuService.getById(menuId);
+		return success().put("menu", menu);
+	}
+
+	/**
+	 * 保存
+	 */
+	@BussinessLog(title = "菜单管理", businessType = BusinessType.INSERT)
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	@RequiresPermissions("sys:menu:add")
+	@ResponseBody
+	public ResponseData save(@Validated SysMenuEntity menu) {
+		// 数据校验
+		verifyForm(menu);
+		if (!sysMenuService.checkMenuNameUnique(menu)){
+			return error("新增菜单'" + menu.getName()+ "'失败，菜单名称已存在");
+		}
+		UserUtils.clearCachedAuthorizationInfo(); //清理权限缓存
+		return sysMenuService.save(menu)?success():error("新增失败!");
+	}
+
+
+
+	/**
+	 * 删除
+	 */
+	@BussinessLog(title = "菜单管理", businessType = BusinessType.DELETE)
+	@RequestMapping(value = "/del/{menuId}")
+	@RequiresPermissions("sys:menu:del")
+	@RequiresRoles(Constant.SU_ADMIN)
+	@ResponseBody
+	public ResponseData delete(@PathVariable("menuId") Long menuId) {
+		List<SysMenuEntity> menuList = sysMenuService.findListParentId(menuId);
+		if (menuList.size() > 0) {
+			return error("请先删除子菜单或按钮");
+		}
+		UserUtils.clearCachedAuthorizationInfo(); //清理权限缓存
+		return sysMenuService.removeById(menuId)?success():error("删除失败!");
+	}
+
+	@BussinessLog(title = "菜单管理", businessType = BusinessType.CLEAN)
+	@RequestMapping(value = "/clearMenu", method = RequestMethod.GET)
+	@RequiresPermissions("sys:menu:clear")
+	@RepeatSubmit
+	@ResponseBody
+	public ResponseData clearConfig(){
+		return sysMenuService.clearMenuRedis()?success():error("清除失败!");
+	}
+
+	/**
+	 * 验证参数是否正确
+	 */
+	private void verifyForm(SysMenuEntity menu) {
+		if (StrUtil.isBlank(menu.getName())) {
+			throw new RxcException("菜单名称不能为空");
+		}
+
+		if (menu.getParentId() == null) {
+			throw new RxcException("上级菜单不能为空");
+		}
+
+		// 菜单
+		if (menu.getType() == Constant.MenuType.MENU.getValue()) {
+			if (StrUtil.isBlank(menu.getUrl())) {
+				throw new RxcException("菜单URL不能为空");
+			}
+		}
+
+		// 上级菜单类型
+		int parentType = Constant.MenuType.CATALOG.getValue();
+		if (menu.getParentId() != 0) {
+			SysMenuEntity parentMenu = sysMenuService.getById(menu.getParentId());
+			parentType = parentMenu.getType();
+		}
+
+		// 目录、菜单
+		if (menu.getType() == Constant.MenuType.CATALOG.getValue()
+				|| menu.getType() == Constant.MenuType.MENU.getValue()) {
+			if (parentType != Constant.MenuType.CATALOG.getValue()) {
+				throw new RxcException("上级菜单只能为目录类型");
+			}
+			return;
+		}
+
+		// 按钮
+		if (menu.getType() == Constant.MenuType.BUTTON.getValue()) {
+			if (parentType != Constant.MenuType.MENU.getValue()) {
+				throw new RxcException("上级菜单只能为菜单类型");
+			}
+			return;
+		}
+	}
+}

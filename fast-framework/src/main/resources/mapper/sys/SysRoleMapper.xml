@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysRoleMapper">
+
+    <sql id="selectRoleVo">
+		SELECT r.id, r.role_name, r.role_key, r.role_sort, r.status, r.del_flag, r.create_time, r.remark
+        FROM sys_role r
+	</sql>
+
+    <sql id="selectRoleContactVo">
+        SELECT
+        <choose>
+            <when test="_databaseId == 'sqlserver'"></when>
+            <otherwise>DISTINCT</otherwise>
+        </choose>
+        r.id, r.role_name, r.role_key, r.role_sort,
+        r.status, r.del_flag, r.create_time, r.remark,r.data_scope
+        FROM sys_role r
+        LEFT JOIN (SELECT user_id, role_id FROM sys_user_role) ur ON ur.role_id = r.id
+        LEFT JOIN (SELECT id, dept_id,comp_id FROM sys_user) u ON u.id = ur.user_id
+    </sql>
+    <!--    LEFT JOIN (SELECT id,name FROM sys_comp) c ON u.dept_id = c.id-->
+    <!-- 条件语句-->
+    <sql id="selectConditions">
+        <if test="roleName != null and roleName != ''">
+            AND r.role_name LIKE
+            <choose>
+                <when test="_databaseId == 'oracle'">'%,'||#{roleName}||',%'</when>
+                <otherwise>CONCAT('%', #{roleName}, '%')</otherwise>
+            </choose>
+        </if>
+        <if test = "roleKey !=null and roleKey!=''">
+            AND r.role_key LIKE
+            <choose>
+                <when test="_databaseId == 'oracle'">'%,'||#{roleKey}||',%'</when>
+                <otherwise>CONCAT('%', #{roleKey}, '%')</otherwise>
+            </choose>
+        </if>
+    </sql>
+
+    <select id="getRolesByUserId" parameterType="Long" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleContactVo"/>
+        WHERE r.del_flag = '0' AND ur.user_id = #{userId}
+    </select>
+
+    <select id="checkRoleNameUnique" parameterType="String" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = '0' AND r.role_name=#{roleName}
+    </select>
+
+    <select id="checkRoleKeyUnique" parameterType="String" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleVo"/>
+        WHERE r.del_flag = '0' AND r.role_key=#{roleKey}
+    </select>
+
+    <select id="findPage" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleContactVo"/>
+        WHERE r.del_flag = '0'
+        <include refid="selectConditions"/>
+        <if test = "sql_filter !=null and sql_filter!=''">
+            AND ${sql_filter}
+        </if>
+        <choose>
+            <when test="_databaseId == 'sqlserver'">
+                GROUP BY r.id, r.role_name, r.role_key, r.role_sort, r.status,
+                r.del_flag, r.create_time, r.remark, r.data_scope
+            </when>
+            <otherwise></otherwise>
+        </choose>
+    </select>
+
+    <select id="getRoleList" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleContactVo"/>
+        WHERE r.del_flag = '0'  AND r.status = '0'
+        <include refid="selectConditions"/>
+        <if test = "sql_filter !=null and sql_filter!=''">
+            AND ${sql_filter}
+        </if>
+        <choose>
+            <when test="_databaseId == 'sqlserver'">
+                GROUP BY r.id, r.role_name, r.role_key, r.role_sort, r.status,
+                r.del_flag, r.create_time, r.remark, r.data_scope
+            </when>
+            <otherwise></otherwise>
+        </choose>
+    </select>
+
+    <select id="findRoleByIds" parameterType="Long" resultType="com.j2eefast.framework.sys.entity.SysRoleEntity">
+        <include refid="selectRoleContactVo"/>
+        WHERE r.del_flag = '0' AND
+        ur.role_id IN
+        <foreach collection="array" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.j2eefast.framework.sys.mapper.SysCompDeptMapper">
+	
+	<select id="findDeptIdList" resultType="long">
+		SELECT dept_id FROM sys_comp_dept WHERE comp_id IN
+		<foreach item="compId" collection="array" open="(" separator="," close=")">
+			#{compId}
+		</foreach>
+	</select>
+
+</mapper>

@@ -1,0 +1,18 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="流程定义XML" bodyClass="white-bg" libs=["prism"]/>
+<div class="wrapper">
+    <pre class="line-numbers">
+         <code class="language-xml">
+                ${depXml?html}
+         </code>
+     </pre>
+</div>
+<@footer>
+<script type="text/javascript">
+    function onLoadSuccess() {
+        opt.modal.msg("数据正在加载...请稍后");
+    }
+</script>
+</@footer>
+</@pageTheme>

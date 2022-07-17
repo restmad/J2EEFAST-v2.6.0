@@ -1,0 +1,50 @@
+spring:
+	#数据库配置
+    datasource:
+        #默认(主)数据库配置
+        master:
+            #mysql 数据库配置
+            driverClassName: com.mysql.cj.jdbc.Driver
+            url: jdbc:mysql://127.0.0.1:3306/fastdb?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=CTT
+            username: 
+            password: 
+            filters: mergeStat
+
+            #PostgreSql 数据库配置
+            #driverClassName: org.postgresql.Driver
+            #url: jdbc:postgresql://127.0.0.1:5432/fastdb
+            #username: 
+            #password: 
+            #filters: mergeStat
+
+            #oracle 数据库配置
+            #driverClassName: oracle.jdbc.driver.OracleDriver
+            #url: jdbc:oracle:thin:@127.0.0.1:1521/orcl
+            #username: 
+            #password: 
+            #filters: wall,mergeStat
+
+            #mssql 2012以上版本 数据库配置
+            #driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            #url: jdbc:sqlserver://ip:1433;database=fastdb
+            #username: 
+            #password: 
+            #filters: wall,mergeStat
+    #redis数据库服务器
+    redis:
+        database: 10
+        host: 127.0.0.1
+        port: 6379
+        #redis密码 请为你的redis 设置连接密码、 如果无密码、请注释 #password,否则会报连接异常
+        password:
+
+mybatis-plus:
+    type-aliases-package: com.j2eefast.*.*.entity
+    mapper-package: com.j2eefast.*.*.mapper
+
+http:
+    port: 8080
+server:
+    name: '##################J2eeFAST[生产环境]##############'
+    projectName: 'J2eeFAST[生产环境]'
+    port: 443 #HTTPS端口

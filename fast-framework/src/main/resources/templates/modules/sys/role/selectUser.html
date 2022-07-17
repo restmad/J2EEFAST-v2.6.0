@@ -1,0 +1,115 @@
+<#include "/common/defaultEngine.html"/>
+<@pageTheme mark="${config.optimize()?string('true', 'false')}">
+<@header title="授权用户列表" libs=["table"]/>
+<div class="container-div">
+	<div class="row">
+	<div class="col-sm-12 search-collapse">
+	<@f.form id="select-user-form">
+        <@f.hidden name="roleId" value="${roleId}" refresh=false />
+        <div class="select-list">
+			<ul>        
+	            <li>
+	                ${i18n("登陆账号")}:<input type="text" class="form-control" name="username"/>
+	            </li>
+	            <li>
+	                ${i18n("邮箱")}:<input type="text" class="form-control" name="email"/>
+	            </li>
+	            <li>
+	                ${i18n("手机号码")}:<input type="text" class="form-control" name="mobile"/>
+	            </li>
+	            <li>
+	                <label>${i18n("机构查询")}</label>：
+	                <div class="control-div width-150">
+	                    <@f.treeselect name="compId" boxTitle="请选择归属机构" url="sys/comp/treeData"
+	                    expandLevel=true
+	                    placeholder="请选择上级机构"/>
+	                </div>
+	            </li>
+	            <li>
+	                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;${i18n("查询")}</a>
+	                <a class="btn btn-warning btn-rounded btn-sm" onclick="opt.form.reset()"><i class="fa fa-refresh"></i>&nbsp;${i18n("重置")}</a>
+	            </li>
+            </ul>
+        </div>
+    </@f.form>
+    </div>
+    <@table id="bootstrap-table">
+    </@table>
+    </div>
+</div>
+<@footer>
+<script>
+    var datas = ${dict.getDictListJson('sys_user_show_hide')};
+    var prefix = baseURL + 'sys/role/authUser';
+
+    $(function() {
+        /* 初始表格对象 */
+        var options = {
+            url: prefix + "/unallocatedList",
+            sortName: "createTime",
+            queryParams: queryParams,
+            uniqueId: "id", /* 唯一ID */
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            pageSize: 10,
+            pageList: [10, 20, 30],
+            showColumns: false,
+            modalName: "用户",
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    title: "${i18n("序号")}", width: 10, formatter: function (value, row, index) {
+                        return $.table.serialNumber(index);
+                    }
+                },
+                {field: 'username', title: "${i18n("账号")}"},
+                {field: 'name', title:  "${i18n("姓名")}"},
+                {field: 'compName', title: "${i18n("归属公司")}"},
+                {field: 'deptName', title:  "${i18n("归属机构")}"},
+                {field: 'email', title:  "${i18n("邮箱")}"},
+                {field: 'mobile', title:  "${i18n("手机")}"},
+                {
+                    field: 'status', title: "${i18n("状态")}", formatter: function (value, row, index) {
+                        return opt.common.selectDictLabel(datas, value);
+                    }
+                },
+                {field: 'createTime', title: "${i18n("创建时间")}", sortable: true}
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.roleId = $("#roleId").val();
+        return search;
+    }
+
+
+    function treeCallback(id, event, index, layero, nodes) {
+        if(id == "compId"){
+            if(event == "ok"){
+                /* 点击确认按钮直接刷新表格*/
+                $.table.search();
+            }
+        }
+    }
+
+    /* 添加用户-选择用户-提交 */
+    function submitHandler() {
+        var rows = $.table.selectAllColumns();
+        if (rows.length == 0) {
+            opt.modal.warning("${i18n("请至少选择一条记录")}");
+            return;
+        }
+        var data = [];
+        data.push({"name": "roleId", "value": $("#roleId").val()});
+        data.push({"name": "userIds", "value": rows});
+        opt.operate.save(prefix + "/insertAuthUsers", data);
+    }
+</script>
+</@footer>
+</@pageTheme>

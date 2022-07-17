@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j2eefast.generator.gen.mapper.GenTableMapper">
+
+	<resultMap type="GenTableEntity" id="GenTableResult">
+	    <id     property="id"        column="id"        />
+		<result property="tableName"      column="table_name"      />
+		<result property="tableComment"   column="table_comment"   />
+		<result property="className"      column="class_name"      />
+		<result property="tplCategory"    column="tpl_category"    />
+		<result property="packageName"    column="package_name"    />
+		<result property="moduleName"     column="module_name"     />
+		<result property="businessName"   column="business_name"   />
+		<result property="functionName"   column="function_name"   />
+		<result property="functionAuthor" column="function_author" />
+		<result property="options"        column="options"         />
+		<result property="createBy"       column="create_by"       />
+		<result property="createTime"     column="create_time"     />
+		<result property="updateBy"       column="update_by"       />
+		<result property="runPath"       column="run_path"       />
+		<result property="actionsType"       column="actions_type" />
+		<result property="isCover"       column="is_cover" />
+		<result property="isDel"       column="is_del"       />
+		<result property="dbName"       column="db_name"       />
+		<result property="updateTime"     column="update_time"     />
+		<result property="parentId"       column="parent_id" />
+		<result property="parentName"       column="parent_name" />
+		<result property="menuName"       column="menu_name"       />
+		<result property="moduleCodes"       column="module_codes"       />
+		<result property="menuIcon"     column="menu_icon"     />
+		<result property="menuOrder"     column="menu_order"     />
+		<result property="menuTarget"     column="menu_target"     />
+		<result property="remark"         column="remark"          />
+		<result property="target"         column="target"          />
+		<result property="childId"         column="child_id"          />
+		<result property="childFieldId"         column="child_field_id"          />
+		<result property="menuNew"         column="menu_new"          />
+	</resultMap>
+	
+	<sql id="genTableColumns">
+	     t.id AS id
+		,t.table_name AS tableName
+		,t.table_comment  AS tableComment
+		,t.class_name  AS className
+		,t.tpl_category  AS tplCategory
+		,t.package_name  AS packageName
+		,t.module_name  AS moduleName
+		,t.business_name  AS businessName
+		,t.function_name  AS functionName
+		,t.function_author  AS functionAuthor
+		,t.run_path  AS runPath
+		,t.is_del  AS isDel
+		,t.actions_type  AS actionsType
+		,t.is_cover  AS isCover
+		,t.db_name  AS dbName
+		,t.options   AS options
+		,t.create_by  AS createBy
+		,t.create_time AS createTime
+		,t.update_by AS updateBy
+		,t.parent_id AS parentId
+		,t.parent_name AS parentName
+		,t.menu_name AS menuName
+		,t.menu_id AS menuId
+		,t.module_codes AS moduleCodes
+		,t.menu_icon AS  menuIcon
+		,t.menu_target AS   menuTarget
+		,t.menu_order AS  menuOrder
+		,t.update_time AS updateTime
+		,t.is_img AS isImg
+		,t.is_file AS isFile
+		,t.remark  AS remark
+		,t.target  AS target
+		,t.child_id  AS childId
+		,t.child_field_id  AS childFieldId
+		,t.menu_new AS menuNew
+	</sql>
+
+	<select id="findByName" parameterType="String" resultType="GenTableEntity">
+		SELECT
+        <include refid="genTableColumns"/>
+        FROM gen_table t
+        WHERE  t.table_name = #{tableName}
+	</select>
+
+	<select id="findByTableId" parameterType="Long"  resultType="GenTableEntity">
+		SELECT
+		<include refid="genTableColumns"/>
+		FROM gen_table t
+		WHERE  t.id = #{id}
+	</select>
+
+	<select id="findGenTableMenuById" parameterType="Long" resultMap="GenTableResult">
+		SELECT t.id, t.table_name,t.parent_id,t.parent_name,t.menu_name,
+		t.module_codes,t.menu_icon,t.menu_target,t.menu_order, t.menu_id, t.menu_new
+		FROM gen_table t
+		WHERE t.id = #{id}
+	</select>
+
+	<update id="updateGenTable" parameterType="GenTableEntity">
+		UPDATE gen_table
+		<set>
+		<if test="tableName != null">table_name = #{tableName},</if>
+		<if test="tableComment != null and tableComment != ''">table_comment = #{tableComment},</if>
+		<if test="className != null and className != ''">class_name = #{className},</if>
+		<if test="functionAuthor != null and functionAuthor != ''">function_author = #{functionAuthor},</if>
+		<if test="tplCategory != null and tplCategory != ''">tpl_category = #{tplCategory},</if>
+		<if test="packageName != null and packageName != ''">package_name = #{packageName},</if>
+		<if test="moduleName != null and moduleName != ''">module_name = #{moduleName},</if>
+		<if test="businessName != null and businessName != ''">business_name = #{businessName},</if>
+		<if test="functionName != null and functionName != ''">function_name = #{functionName},</if>
+		<if test="runPath != null and runPath != ''">run_path = #{runPath},</if>
+		<if test="isDel != null and isDel != ''">is_del = #{isDel},</if>
+		<if test="isImg != null and isImg != ''">is_img = #{isImg},</if>
+		<if test="isFile != null and isFile != ''">is_file = #{isFile},</if>
+		<if test="dbName != null and dbName != ''">db_name = #{dbName},</if>
+		<if test="actionsType != null and actionsType != ''">actions_type = #{actionsType},</if>
+		<if test="isCover != null and isCover != ''">is_cover = #{isCover},</if>
+		<if test="options != null and options != ''">options = #{options},</if>
+		<if test="parentId != null">parent_id = #{parentId},</if>
+		<if test="target != null">target = #{target},</if>
+		<if test="menuOrder != null">menu_order = #{menuOrder},</if>
+		<if test="parentName != null and parentName != ''">parent_name = #{parentName},</if>
+		<if test="menuName != null and menuName != ''">menu_name = #{menuName},</if>
+		<if test="menuNew != null and menuNew != ''">menu_new = #{menuNew},</if>
+		<if test="moduleCodes != null and moduleCodes != ''">module_codes = #{moduleCodes},</if>
+		<if test="menuIcon != null and menuIcon != ''">menu_icon = #{menuIcon},</if>
+		<if test="menuTarget != null and menuTarget != ''">menu_target = #{menuTarget},</if>
+		<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+		<if test="remark != null">remark = #{remark},</if>
+		<if test="childId != null">child_id = #{childId},</if>
+		<if test="childFieldId != null">child_field_id = #{childFieldId},</if>
+		<if test="_databaseId == 'mysql'">update_time = SYSDATE()</if>
+		<if test=" _databaseId  == 'postgresql'">update_time = CLOCK_TIMESTAMP()</if>
+		<if test=" _databaseId  == 'sqlserver'">update_time = GETDATE()</if>
+		<if test=" _databaseId  == 'oracle'">update_time = TO_TIMESTAMP(TO_CHAR(SYSDATE,'YYYY-MM-DD')||TO_CHAR(SYSDATE,'hh24:mi:ss'),'yyyy-mm-dd hh24:mi:ss')</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<update id="updateGenTableMenuId">
+		UPDATE gen_table
+		<set>
+			<if test="menuId != null">menu_id = #{menuId},</if>
+		</set>
+		WHERE id = #{id}
+	</update>
+
+	<delete id="deleteGenTableByIds" parameterType="Long">
+		DELETE FROM gen_table WHERE id IN
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="generateTableList" resultMap="GenTableResult">
+        <if test="dbType == 'mysql'">
+			SELECT table_name, table_comment, create_time, update_time FROM information_schema.tables
+			WHERE table_schema =
+			<choose><when test="schema != null and schema !=''"> #{schema}</when><otherwise>(SELECT database())</otherwise></choose>
+			AND table_name NOT LIKE 'qrtz_%'
+			<if test="tableName != null and tableName != ''">
+				AND table_name like concat('%', #{tableName}, '%')
+			</if>
+			<if test="tableComment != null and tableComment != ''">
+				AND table_comment like concat('%', #{tableComment}, '%')
+			</if>
+			<if test="notList != null">
+				AND table_name NOT IN
+				<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+        </if>
+
+		<if test="dbType == 'postgresql'">
+			SELECT t.table_name, t.table_comment FROM( SELECT  p.tablename AS table_name, CAST(obj_description(relfilenode,'pg_class') AS VARCHAR) AS table_comment, p.tableowner
+			FROM pg_tables AS p LEFT JOIN pg_class  AS c ON p.tablename = c.relname) AS t
+			<where>
+				<if test="schema != null and schema != ''">
+					AND  t.tableowner = #{schema}
+				</if>
+				AND t.table_name NOT LIKE 'qrtz_%'
+				<if test="tableName != null and tableName != ''">
+					AND t.table_name LIKE concat('%', #{tableName}, '%')
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					AND t.table_comment LIKE concat('%', #{tableComment}, '%')
+				</if>
+				<if test="notList != null">
+					AND t.table_name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+		</if>
+
+		<if test="dbType == 'oracle'">
+			SELECT
+			t.TABLE_NAME AS table_name,
+			NVL(c.COMMENTS,t.TABLE_NAME) AS table_comment,  o.created AS create_time, o.last_ddl_time AS update_time
+			FROM all_tables t
+			LEFT JOIN user_tab_comments c ON t.table_name = c.table_name
+			LEFT JOIN dba_objects o ON t.table_name = o.object_name   AND t.OWNER = o.OWNER
+			<where>
+				AND t.OWNER =  UPPER(#{schema})
+				AND t.table_name NOT LIKE  UPPER('qrtz_%')
+				<if test="tableName != null and tableName != ''">
+					AND t.table_name LIKE '%'||UPPER(#{tableName})||'%'
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					AND nvl(c.COMMENTS,t.TABLE_NAME) LIKE '%'|| UPPER(#{tableComment})||'%'
+				</if>
+				<if test="notList != null">
+					AND t.table_name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+			ORDER BY t.TABLE_NAME
+		</if>
+
+		<if test="dbType == 'sqlserver'">
+			SELECT
+			a.name AS table_name,
+			ISNULL(k.t_comment,'-') AS table_comment,
+			a.create_date AS create_time,
+			a.modify_date AS update_time
+			FROM
+			sys.tables a
+			LEFT JOIN (SELECT g.major_id,CONVERT(NVARCHAR(100),ISNULL(g.[value],'-')) AS t_comment,g.minor_id FROM sys.extended_properties g) k
+			ON (a.object_id = k.major_id AND k.minor_id = 0)
+			<where>
+				AND a.name NOT LIKE 'qrtz_%'   <!-- 不显示 计划任务的表-->
+				<if test="tableName != null and tableName != ''">
+					AND a.name LIKE CONCAT('%', #{tableName}, '%')
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					AND k.t_comment LIKE CONCAT('%', #{tableComment}, '%')
+				</if>
+				<if test="notList != null">
+					AND a.name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+		</if>
+
+	</select>
+	
+	<select id="generateTableListByNames" resultMap="GenTableResult">
+		<if test="dbType == 'mysql'">
+			SELECT table_name, table_comment, create_time, update_time FROM information_schema.tables
+			WHERE table_name NOT LIKE 'qrtz_%' AND table_name NOT LIKE 'gen_%' AND table_schema =
+			<choose><when test="schema != null and schema !=''"> #{schema}</when><otherwise>(SELECT database())</otherwise></choose>
+				AND table_name IN
+			<foreach collection="tableNames" item="tableName" open="(" separator="," close=")">
+				#{tableName}
+			</foreach>
+		</if>
+
+		<if test="dbType == 'postgresql'">
+			SELECT  p.tablename AS table_name, CAST(obj_description(relfilenode,'pg_class') AS VARCHAR) AS table_comment
+			FROM pg_tables AS p
+			LEFT JOIN pg_class  AS c ON p.tablename = c.relname
+			<where>
+				<if test="schema != null and schema != ''">
+					AND  p.tableowner = #{schema}
+				</if>
+				AND p.tablename NOT LIKE 'qrtz_%' AND p.tablename NOT LIKE 'gen_%'
+				AND p.tablename IN
+				<foreach collection="tableNames" item="tableName" open="(" separator="," close=")">
+					#{tableName}
+				</foreach>
+			</where>
+		</if>
+
+		<if test="dbType == 'oracle'">
+			SELECT
+			t.TABLE_NAME AS table_name,
+			nvl(c.COMMENTS,t.TABLE_NAME) AS table_comment,  o.created AS create_time, o.last_ddl_time AS update_time
+			FROM all_tables t
+			LEFT JOIN user_tab_comments c ON t.table_name = c.table_name
+			LEFT JOIN dba_objects o ON t.table_name = o.object_name  AND t.OWNER = o.OWNER
+			<where>
+				AND t.OWNER = UPPER(#{schema})
+				AND t.table_name NOT LIKE  UPPER('qrtz_%')
+				AND t.table_name IN
+				<foreach collection="tableNames" item="tableName" open="(" separator="," close=")">
+					UPPER(#{tableName})
+				</foreach>
+			</where>
+			ORDER BY t.TABLE_NAME
+		</if>
+		<if test="dbType == 'sqlserver'">
+			SELECT
+			a.name AS table_name,
+			ISNULL(k.t_comment,'-') AS table_comment,
+			a.create_date AS create_time,
+			a.modify_date AS update_time
+			FROM
+			sys.tables a
+			LEFT JOIN (SELECT g.major_id,CONVERT(NVARCHAR(100),ISNULL(g.[value],'-')) AS t_comment,g.minor_id FROM sys.extended_properties g) k
+			ON (a.object_id = k.major_id AND k.minor_id = 0)
+			<where>
+				AND a.name NOT LIKE 'qrtz_%' AND a.name NOT LIKE 'gen_%'   <!-- 不显示 计划任务的表-->
+				AND a.name IN
+				<foreach collection="tableNames" item="tableName" open="(" separator="," close=")">
+					#{tableName}
+				</foreach>
+			</where>
+		</if>
+	</select>
+	
+	<select id="generateTablePage" resultMap="GenTableResult">
+        <if test="dbType == 'mysql'">
+			SELECT table_name, table_comment, create_time, update_time FROM information_schema.tables
+	       	WHERE table_schema =
+	       	<choose><when test="schema != null and schema !=''"> #{schema}</when><otherwise>(SELECT database())</otherwise></choose>
+		    AND table_name NOT LIKE 'qrtz_%'   <!-- 不显示 计划任务的表-->
+		    <if test="tableName != null and tableName != ''">
+			   AND table_name LIKE concat('%', #{tableName}, '%')
+		    </if>
+		   <if test="tableComment != null and tableComment != ''">
+			  AND table_comment LIKE concat('%', #{tableComment}, '%')
+		   </if>
+			<if test="notList != null">
+				AND table_name NOT IN
+				<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+        </if>
+
+		<if test="dbType == 'postgresql'">
+			SELECT t.table_name, t.table_comment FROM( SELECT  p.tablename AS table_name, CAST(obj_description(relfilenode,'pg_class') AS VARCHAR) AS table_comment, p.tableowner
+			FROM pg_tables AS p LEFT JOIN pg_class  AS c on p.tablename = c.relname) AS t
+			<where>
+				<if test="schema != null and schema != ''">
+					AND  t.tableowner = #{schema}
+				</if>
+				AND t.table_name NOT LIKE 'qrtz_%'
+				<if test="tableName != null and tableName != ''">
+					AND t.table_name LIKE concat('%', #{tableName}, '%')
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					AND t.table_comment LIKE concat('%', #{tableComment}, '%')
+				</if>
+				<if test="notList != null">
+					AND t.table_name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+		</if>
+
+		<if test="dbType == 'oracle'">
+			SELECT
+			t.TABLE_NAME AS table_name,
+			nvl(c.COMMENTS,t.TABLE_NAME) AS table_comment, o.created AS create_time, o.last_ddl_time AS update_time
+			FROM all_tables t
+			LEFT JOIN user_tab_comments c ON t.table_name = c.table_name
+			LEFT JOIN dba_objects o ON t.table_name = o.object_name   AND t.OWNER = o.OWNER
+			<where>
+				AND t.OWNER =  UPPER(#{schema})
+				AND t.table_name NOT LIKE  UPPER('qrtz_%')   <!-- 不显示 计划任务的表-->
+				<if test="tableName != null and tableName != ''">
+					AND t.table_name LIKE '%'||UPPER(#{tableName})||'%'
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					AND nvl(c.COMMENTS,t.TABLE_NAME) LIKE '%'|| UPPER(#{tableComment})||'%'
+				</if>
+				<if test="notList != null">
+					AND t.table_name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+			ORDER BY t.TABLE_NAME
+		</if>
+		<if test="dbType == 'sqlserver'">
+			SELECT
+			a.name AS table_name,
+			ISNULL(k.t_comment,'-') AS table_comment,
+			a.create_date AS create_time,
+			a.modify_date AS update_time
+			FROM
+			sys.tables a
+			LEFT JOIN (SELECT g.major_id,CONVERT(NVARCHAR(100),ISNULL(g.[value],'-')) AS t_comment,g.minor_id FROM sys.extended_properties g) k
+			ON (a.object_id = k.major_id AND k.minor_id = 0)
+			<where>
+				AND a.name NOT LIKE 'qrtz_%'   <!-- 不显示 计划任务的表-->
+				<if test="tableName != null and tableName != ''">
+					-- AND a.name LIKE CONCAT('%', #{tableName}, '%')
+					AND a.name LIKE '%' +  #{tableName} + '%'
+				</if>
+				<if test="tableComment != null and tableComment != ''">
+					-- AND k.t_comment LIKE CONCAT('%', #{tableComment}, '%')
+					AND k.t_comment LIKE '%' + #{tableComment} + '%'
+				</if>
+				<if test="notList != null">
+					AND a.name NOT IN
+					<foreach collection="notList" index="index" item="item" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</if>
+			</where>
+		</if>
+	</select>
+	
+</mapper>
