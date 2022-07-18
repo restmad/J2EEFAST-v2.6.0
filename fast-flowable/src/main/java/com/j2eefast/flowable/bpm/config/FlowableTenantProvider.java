@@ -24,7 +24,7 @@ public class FlowableTenantProvider implements TenantProvider {
 
     @Override
     public String getTenantId() {
-        if((Boolean) PropertiesUtils.getInstance().get(ConfigConstant.TENANTMODEL)){
+        /*if((Boolean) PropertiesUtils.getInstance().get(ConfigConstant.TENANTMODEL)){
             try{
                 //获取系统租户号
                 if(UserUtils.isLogin()){
@@ -43,7 +43,7 @@ public class FlowableTenantProvider implements TenantProvider {
             }catch (Exception e){
                 log.error("异常",e);
             }
-        }
+        }*/
         return null;
     }
 }

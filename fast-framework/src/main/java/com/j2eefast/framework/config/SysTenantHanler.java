@@ -46,6 +46,6 @@ public class SysTenantHanler extends CustomTenantLineHandler {
             log.error("异常",e);
         }
         log.error("获取租户异常");
-        return "000000";
+        return null;
     }
 }

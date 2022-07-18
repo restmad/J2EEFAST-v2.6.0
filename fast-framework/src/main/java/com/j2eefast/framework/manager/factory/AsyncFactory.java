@@ -67,7 +67,7 @@ public class AsyncFactory {
 											 final Date loginDate,
 											 final String loginType){
     	final String bUseraget = ServletUtil.getRequest().getHeader("User-Agent");
-		final String tenantId = ServletUtil.getParameter("tenantId","000000");
+		final String tenantId = ServletUtil.getParameter("tenantId","");
 		final UserAgent userAgent =   UserAgentUtil.parse(bUseraget);
 		final String ip = ServletUtil.getIp();
         return new TimerTask(){
@@ -176,7 +176,7 @@ public class AsyncFactory {
 											 final String message){
 		final String bUseraget = ServletUtil.getRequest().getHeader("User-Agent");
 		final UserAgent userAgent =   UserAgentUtil.parse(bUseraget);
-		final String tenantId = ServletUtil.getParameter("tenantId","000000");
+		final String tenantId = ServletUtil.getParameter("tenantId","");
 		final String ip = ServletUtil.getIp();
 		return new TimerTask(){
 			@Override

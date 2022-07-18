@@ -24,7 +24,7 @@ public class Constant {
 	public static final Long SUPER_ADMIN = 1L;
 	public static final String SU_ADMIN = "ADMIN";
 	/** 管理员租户**/
-	public static final String SUPER_TENANT = "000000";
+	public static final String SUPER_TENANT = "";
 	public static final String TENANT_PARAMETER = "tenantId";
 
 

@@ -157,7 +157,7 @@ public class BussinessLogAop {
 				operLog.setDeptId(currentUser.getDeptId());
 				operLog.setTenantId(currentUser.getTenantId());
 			}else{
-				operLog.setTenantId("000000");
+				operLog.setTenantId("");
 			}
 			
 			// 判断是否异常
