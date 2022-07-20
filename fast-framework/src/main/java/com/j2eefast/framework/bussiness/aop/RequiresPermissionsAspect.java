@@ -9,6 +9,7 @@ import com.j2eefast.common.core.utils.ServletUtil;
 import com.j2eefast.common.core.utils.ToolUtil;
 import com.j2eefast.common.core.xss.SQLFilter;
 import com.j2eefast.framework.utils.Constant;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
 @Order(4)
 @Aspect
 @Component
+@Slf4j
 public class RequiresPermissionsAspect {
 
     @Value("#{ @environment['fast.xss.excludes'] ?: null }")
@@ -46,6 +48,7 @@ public class RequiresPermissionsAspect {
     @SuppressWarnings("unchecked")
     @Before("dataFilterCut()")
     public void dataFilter(JoinPoint point) throws Throwable {
+        log.info("dataFilterCut");
         MethodSignature signature = (MethodSignature) point.getSignature();
         RequiresPermissions dataFilter = signature.getMethod().getAnnotation(RequiresPermissions.class);
         Object[] params = point.getArgs();

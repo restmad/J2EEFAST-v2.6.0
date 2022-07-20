@@ -8,6 +8,7 @@ import com.j2eefast.common.core.config.ResourceLoaderServlet;
 import com.j2eefast.common.core.constants.ConfigConstant;
 import com.j2eefast.common.core.utils.CookieUtil;
 import com.j2eefast.common.core.utils.ToolUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author zhouzhou
  */
 @Component
+@Slf4j
 public class SecurityKeyInterceptorAdapter implements HandlerInterceptor{
 
 	/**
@@ -63,6 +65,8 @@ public class SecurityKeyInterceptorAdapter implements HandlerInterceptor{
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+
+		log.info("SecurityKeyInterceptorAdapter");
 
 		String _secretKey = "";
 		//获取登录安全Key

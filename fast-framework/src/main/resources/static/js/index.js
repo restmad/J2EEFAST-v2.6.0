@@ -697,6 +697,7 @@ $(function () {
     $('[click-id="logout"]').each(function () {
         $(this).on('click', function () {
             opt.modal.confirm($.i18n.prop('确定要退出系统吗?'),function () {
+                alert('123');
                 window.location.href= "logout";
                 return;
             })

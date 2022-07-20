@@ -9,6 +9,7 @@ import com.j2eefast.common.core.base.entity.LoginUserEntity;
 import com.j2eefast.common.core.utils.ToolUtil;
 import com.j2eefast.framework.utils.Constant;
 import com.j2eefast.framework.utils.UserUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -27,6 +28,7 @@ import java.util.Map;
  * @date 2020/1/18 12:25
  */
 @Component
+@Slf4j
 public class LockHandlerInterceptorAdapter implements HandlerInterceptor {
 
 	@Autowired
@@ -35,6 +37,7 @@ public class LockHandlerInterceptorAdapter implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+		log.info("pre lock handler:{}", request.getRequestURL());
 		String requestUrl = request.getServletPath();
 		try{
 			if(UserUtils.getSubject().isAuthenticated()){
@@ -63,6 +66,7 @@ public class LockHandlerInterceptorAdapter implements HandlerInterceptor {
 				}
 				if(ToolUtil.isNotEmpty(loginUser.getLoginStatus()) && 
 						loginUser.getLoginStatus().equals(-1) && !requestUrl.equals(outLock)){
+					log.info("send redirect");
 					response.sendRedirect( request.getContextPath() +outLock);
 					return false;
 				}

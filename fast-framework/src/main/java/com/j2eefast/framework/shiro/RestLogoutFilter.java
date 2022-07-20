@@ -18,6 +18,7 @@ public class RestLogoutFilter extends LogoutFilter {
 
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
+        log.info("RestLogoutFilter PREHANDLE");
         Subject subject = getSubject(request, response);
         if (isPostOnlyLogout()){
             if (!WebUtils.toHttp(request).getMethod().toUpperCase(Locale.ENGLISH).equals("POST")){

@@ -47,7 +47,7 @@ public class DruidConfig {
 	public FilterRegistrationBean druidStatFilter() {
 		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new WebStatFilter());
 		//添加过滤规则.
-		filterRegistrationBean.addUrlPatterns("/*");
+		filterRegistrationBean.addUrlPatterns("/druid/*");
 		//添加不需要忽略的格式信息.
 		filterRegistrationBean.addInitParameter(
 				"exclusions", "/static/*,*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid,/druid/*");

@@ -26,6 +26,7 @@ import com.j2eefast.framework.utils.UserUtils;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.http.HtmlUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -52,6 +53,7 @@ import com.j2eefast.common.core.manager.AsyncManager;
  */
 @Aspect
 @Component
+@Slf4j
 public class BussinessLogAop {
 
 	private static final Logger					LOG 					= LoggerFactory.getLogger(BussinessLogAop.class);
@@ -82,6 +84,7 @@ public class BussinessLogAop {
 	 */
 	@Before(value= "logCut()")
 	public void boBefore(JoinPoint joinPoint) {
+		log.info("logCut");
 		// 1、开始时间  
 		long beginTime = System.currentTimeMillis();
 		

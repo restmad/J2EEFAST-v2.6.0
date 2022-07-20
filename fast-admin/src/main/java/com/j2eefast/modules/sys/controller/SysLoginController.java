@@ -41,6 +41,7 @@ import cn.hutool.core.util.PhoneUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.implementation.bind.annotation.Super;
 
 import org.apache.shiro.authc.AuthenticationException;
@@ -69,6 +70,7 @@ import com.j2eefast.framework.utils.UserUtils;
  * @date 2018-11-14 23:28
  */
 @Controller
+@Slf4j
 public class SysLoginController extends BaseController {
 
 	@Autowired
@@ -296,6 +298,7 @@ public class SysLoginController extends BaseController {
 	@RequestMapping("${shiro.loginUrl}")
 	public String login(ModelMap mmp){
 
+		log.info("login");
 		// 刷新主页退出
 		if(isAllowRefreshIndex){
 			String logined = super.getCookie("__LOGINED__");
@@ -309,8 +312,8 @@ public class SysLoginController extends BaseController {
 
 		//如果已经登录、跳转首页
 		if(UserUtils.isLogin()){
-//			//UserUtils.logout();
-			return REDIRECT + super.successUrl;
+			UserUtils.logout();
+			return REDIRECT + super.loginUrl;
 		}
 		
 		String view = super.getPara("view");
@@ -371,6 +374,7 @@ public class SysLoginController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseData login(String username, String password,Boolean rememberMe) {
+		log.info("login");
 		try {
 			if(ToolUtil.isEmpty(username) || 
 					ToolUtil.isEmpty(password) || 
@@ -531,6 +535,7 @@ public class SysLoginController extends BaseController {
 	 */
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
 	public String logout() {
+		log.info("logout get request RequestMapping");
 		UserUtils.getSession().stop();
 		UserUtils.logout();
 		return REDIRECT + PropertiesUtils.getInstance().getProperty("shiro.loginUrl");
@@ -539,6 +544,7 @@ public class SysLoginController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "logout",method = RequestMethod.POST)
 	public ResponseData loginOut() {
+		log.info("logout get request ResponseData");
 		UserUtils.getSession().stop();
 		UserUtils.logout();
 		return success("退出成功");

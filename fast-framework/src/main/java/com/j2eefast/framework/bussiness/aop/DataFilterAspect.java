@@ -11,6 +11,7 @@ import com.j2eefast.common.core.base.entity.LoginUserEntity;
 import com.j2eefast.framework.annotation.AuthData;
 import com.j2eefast.framework.sys.entity.SysRoleEntity;
 import com.j2eefast.framework.utils.UserUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -31,6 +32,7 @@ import com.j2eefast.framework.utils.Constant;
 @Order(5)
 @Aspect
 @Component
+@Slf4j
 public class DataFilterAspect {
 
 	@Pointcut("@annotation(com.j2eefast.framework.annotation.DataFilter)")
@@ -41,6 +43,7 @@ public class DataFilterAspect {
 	@SuppressWarnings("unchecked")
 	@Before("dataFilterCut()")
 	public void dataFilter(JoinPoint point) throws Throwable {
+		log.info("DataFilterAspect");
 		Object params = point.getArgs()[0];
 		if (params != null && params instanceof Map) {
 

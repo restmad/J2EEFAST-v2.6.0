@@ -34,7 +34,7 @@ public class FilterConfig {
 	private String urlPatterns;
 
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	/*@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Bean
 	public FilterRegistrationBean xssFilterRegistration(){
 		FilterRegistrationBean registration = new FilterRegistrationBean();
@@ -45,8 +45,8 @@ public class FilterConfig {
 		registration.setOrder(Integer.MAX_VALUE -1);
 		Map<String, String> initParameters = new HashMap<String, String>();
 		initParameters.put("excludes", excludes);
-		initParameters.put("enabled", enabled);
+		initParameters.put("enabled", "false");
 		registration.setInitParameters(initParameters);
 		return registration;
-	}
+	}*/
 }

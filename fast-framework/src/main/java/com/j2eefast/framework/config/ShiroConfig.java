@@ -372,6 +372,7 @@ public class ShiroConfig {
 
 		// ------------------- 系统必须默认
         filterMap.put("/login", "anon");
+		filterMap.put("/logout", "anon");
         filterMap.put("/static/**", "anon");
 		filterMap.put("/swagger/**'", "anon");
 		filterMap.put("/swagger-ui/**", "anon");
@@ -395,9 +396,9 @@ public class ShiroConfig {
 		filterMap.put("/captcha/**", "anon");
 		//自定义拦截器限制并发人数
 		filtersMap.put("inner", innerSessionFilter());
-		filtersMap.put("logout", new RestLogoutFilter());
+//		filtersMap.put("logout", new RestLogoutFilter());
 		filtersMap.put("user", new UserFilter());
-		filterMap.put("/**", "user,inner");
+//		filterMap.put("/**", "user,inner");
 		shiroFilter.setFilters(filtersMap);
 
 		//授权认证配置

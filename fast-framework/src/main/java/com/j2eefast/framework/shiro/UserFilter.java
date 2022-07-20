@@ -12,6 +12,7 @@ import com.j2eefast.common.core.utils.ResponseData;
 import com.j2eefast.common.core.utils.ServletUtil;
 import com.j2eefast.common.core.utils.ToolUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
@@ -19,6 +20,7 @@ import org.apache.shiro.web.util.WebUtils;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ import java.util.List;
  * 针对系统未登录拦截处理
  * @author huanzhou
  */
+@Slf4j
 public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 
 	/**
@@ -49,6 +52,7 @@ public class UserFilter extends org.apache.shiro.web.filter.authc.UserFilter {
 	
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+		log.info("isAccessAllowed:{}", ((HttpServletRequest)request).getRequestURL());
 		//是否限制IP访问
 		if(ToolUtil.isNotEmpty(innerFilterIps)) {
 			//获取IP

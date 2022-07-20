@@ -12,6 +12,7 @@ import com.j2eefast.common.core.utils.JSON;
 import com.j2eefast.common.core.utils.ResponseData;
 import com.j2eefast.common.core.utils.ServletUtil;
 import com.j2eefast.framework.annotation.RepeatSubmit;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 @Component
+@Slf4j
 public abstract class RepeatSubmitInterceptor implements HandlerInterceptor {
 
     protected final Logger logger = LoggerFactory.getLogger(RepeatSubmitInterceptor.class);
@@ -37,6 +39,7 @@ public abstract class RepeatSubmitInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
+        log.info("RepeatSubmitInterceptor");
         if (handler instanceof HandlerMethod){
             HandlerMethod handlerMethod = (HandlerMethod) handler;
             Method method = handlerMethod.getMethod();

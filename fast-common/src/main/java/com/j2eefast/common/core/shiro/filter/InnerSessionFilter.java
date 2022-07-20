@@ -122,12 +122,12 @@ public class InnerSessionFilter extends AccessControlFilter {
      */
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-
         HttpServletResponse respt = (HttpServletResponse)response;
         respt.setHeader("Powered-By",this.getVersion());
 
         //如果有登录,判断是否访问的为静态资源，如果是游客允许访问的静态资源,直接返回true
         HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+        log.info("onAccessDenied:{}", httpServletRequest.getRequestURL());
         String path = httpServletRequest.getServletPath();
         // 如果是静态文件，则返回true
         if (isStaticFile(path)){

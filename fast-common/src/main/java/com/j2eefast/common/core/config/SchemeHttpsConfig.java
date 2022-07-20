@@ -92,6 +92,7 @@ public class SchemeHttpsConfig {
 
 		@Override
 		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+			logger.info("do filter internal");
 			RedirectResponseWrapper redirectResponseWrapper = new RedirectResponseWrapper(request, response);
 			filterChain.doFilter(request, redirectResponseWrapper);
 		}

@@ -16,6 +16,7 @@ import com.j2eefast.common.core.utils.ResponseData;
 import com.j2eefast.common.core.utils.ServletUtil;
 import com.j2eefast.common.core.utils.ToolUtil;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import java.util.Map;
  * @version: 1.0.1
  */
 @Component
+@Slf4j
 public class LicenseCheckInterceptor implements HandlerInterceptor {
     @Autowired
     private LicenseCheckListener listener;
@@ -54,8 +56,10 @@ public class LicenseCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-    	
-    	LicenseVerify licenseVerify = new LicenseVerify();
+    	log.info("license check");
+        StringBuffer requestURL = request.getRequestURL();
+        log.info("request url: {}", requestURL);
+        LicenseVerify licenseVerify = new LicenseVerify();
     	
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;

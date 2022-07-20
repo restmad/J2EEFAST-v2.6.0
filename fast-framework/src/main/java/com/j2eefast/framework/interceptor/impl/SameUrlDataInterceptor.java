@@ -2,6 +2,7 @@ package com.j2eefast.framework.interceptor.impl;
 
 import com.j2eefast.common.core.utils.JSON;
 import com.j2eefast.framework.interceptor.RepeatSubmitInterceptor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @version V1.0
  */
 @Component
+@Slf4j
 public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
 {
     public final String REPEAT_PARAMS 					= "repeatParams";
@@ -41,6 +43,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
     @Override
     public boolean isRepeatSubmit(HttpServletRequest request) throws Exception
     {
+        log.info("SameUrlDataInterceptor");
         // 本次参数及系统时间
         String nowParams = JSON.marshal(request.getParameterMap());
         Map<String, Object> nowDataMap = new HashMap<String, Object>();
